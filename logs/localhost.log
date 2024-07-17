@@ -1,0 +1,35 @@
+2024-06-15T09:59:19.323Z [localhost] error: Incorrect integer value: '' for column 'id' at row 1
+2024-06-21T02:51:39.229Z [localhost] error: WHERE parameter "client_id" has invalid "undefined" value
+2024-06-21T03:21:44.813Z [localhost] error: Unknown column 'CandidteId' in 'field list'
+2024-06-22T06:43:28.044Z [localhost] error: Incorrect integer value: 'Jaipur' for column 'city_id' at row 1
+2024-06-22T06:43:44.099Z [localhost] error: Incorrect integer value: 'Jaipur' for column 'city_id' at row 1
+2024-06-22T12:13:11.313Z [localhost] error: Incorrect integer value: 'Jaipur' for column 'city_id' at row 1
+2024-06-22T12:16:17.535Z [localhost] error: Validation error
+2024-06-22T12:16:19.835Z [localhost] error: Validation error
+2024-06-22T12:16:34.469Z [localhost] error: Validation error
+2024-06-22T12:17:35.540Z [localhost] error: Validation error
+2024-06-22T12:18:54.332Z [localhost] error: Incorrect integer value: 'Jaipur' for column 'city_id' at row 1
+2024-06-22T12:20:02.766Z [localhost] error: Incorrect integer value: 'Jaipur' for column 'city_id' at row 1
+2024-06-25T09:39:46.434Z [localhost] error: string violation: process_list cannot be an array or an object
+2024-07-13T07:18:50.080Z [localhost] error: WHERE parameter "id" has invalid "undefined" value
+2024-07-13T13:00:56.811Z [localhost] error: Cannot add or update a child row: a foreign key constraint fails (`bgverification`.`candidate_references`, CONSTRAINT `candidate_references_ibfk_1` FOREIGN KEY (`candidate_id`) REFERENCES `candidate` (`id`) ON DELETE SET NULL ON UPDATE CASCADE)
+2024-07-13T13:01:21.489Z [localhost] error: Cannot add or update a child row: a foreign key constraint fails (`bgverification`.`candidate_references`, CONSTRAINT `candidate_references_ibfk_1` FOREIGN KEY (`candidate_id`) REFERENCES `candidate` (`id`) ON DELETE SET NULL ON UPDATE CASCADE)
+2024-07-13T13:07:27.616Z [localhost] error: Cannot add or update a child row: a foreign key constraint fails (`bgverification`.`candidate_references`, CONSTRAINT `candidate_references_ibfk_1` FOREIGN KEY (`candidate_id`) REFERENCES `candidate` (`id`) ON DELETE SET NULL ON UPDATE CASCADE)
+2024-07-13T13:07:30.699Z [localhost] error: Cannot add or update a child row: a foreign key constraint fails (`bgverification`.`candidate_references`, CONSTRAINT `candidate_references_ibfk_1` FOREIGN KEY (`candidate_id`) REFERENCES `candidate` (`id`) ON DELETE SET NULL ON UPDATE CASCADE)
+2024-07-13T13:07:53.852Z [localhost] error: Cannot add or update a child row: a foreign key constraint fails (`bgverification`.`candidate_references`, CONSTRAINT `candidate_references_ibfk_1` FOREIGN KEY (`candidate_id`) REFERENCES `candidate` (`id`) ON DELETE SET NULL ON UPDATE CASCADE)
+2024-07-14T07:01:42.168Z [localhost] error: Cannot add or update a child row: a foreign key constraint fails (`bgverification`.`candidate_references`, CONSTRAINT `candidate_references_ibfk_1` FOREIGN KEY (`candidate_id`) REFERENCES `candidate` (`id`) ON DELETE SET NULL ON UPDATE CASCADE)
+2024-07-14T08:25:23.951Z [localhost] error: Validation error
+2024-07-14T08:27:39.929Z [localhost] error: Validation error
+2024-07-14T08:33:56.985Z [localhost] error: Validation error
+2024-07-14T08:34:34.845Z [localhost] error: Validation error
+2024-07-14T08:34:46.818Z [localhost] error: Validation error
+2024-07-15T13:57:32.044Z [localhost] error: Unknown column 'token' in 'field list'
+2024-07-16T06:55:14.847Z [localhost] error: Validation error
+2024-07-16T07:05:46.583Z [localhost] error: Validation error
+2024-07-16T07:05:49.287Z [localhost] error: Validation error
+2024-07-16T07:05:52.476Z [localhost] error: Validation error
+2024-07-16T07:05:52.688Z [localhost] error: Validation error
+2024-07-16T07:12:09.566Z [localhost] error: Validation error
+2024-07-16T07:12:19.739Z [localhost] error: Validation error
+2024-07-16T07:12:20.945Z [localhost] error: Validation error
+2024-07-16T07:12:26.820Z [localhost] error: Validation error
