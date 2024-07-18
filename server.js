@@ -18,7 +18,7 @@ const featureRouter = require("./api/feature/feature-route");
 const internalTeamRouter = require("./api/internal-team/internal_team-route");
 
 const app = express();
-const port = 9000;
+const port = process.env.PORT || 8080
 
 app.use(cors());
 app.use(bodyParser.json());
