@@ -50,7 +50,7 @@ sequelize
     console.error("Error syncing database:", err);
   });
 
-app.use('/', async (req, res) => {
+app.use('/_alive', async (req, res) => {
       res.status(200).send("Welcome to vitsinco.com")
   });
 app.use("/users", userRouter);
