@@ -1,5 +1,5 @@
 const { Sequelize } = require("sequelize");
-// require("dotenv").config(); // Load environment variables from .env file
+require("dotenv").config(); // Load environment variables from .env file
 
 const sequelize = new Sequelize(
   process.env.RDS_DB_NAME || 'bgv',
