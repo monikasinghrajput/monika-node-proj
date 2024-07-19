@@ -50,6 +50,9 @@ sequelize
     console.error("Error syncing database:", err);
   });
 
+app.use('/', async (req, res) => {
+      res.status(200).json({ msg: "Health Check Complete", status: true });
+  });
 app.use("/users", userRouter);
 app.use("/candidate", candidateRouter);
 app.use("/candidate-address", candidateAddressRouter);
