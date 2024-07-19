@@ -51,7 +51,7 @@ sequelize
   });
 
 app.use('/', async (req, res) => {
-      res.status(200).json({ msg: "Health Check Complete", status: true });
+      res.status(200).send("Welcome to vitsinco.com")
   });
 app.use("/users", userRouter);
 app.use("/candidate", candidateRouter);
