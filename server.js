@@ -24,7 +24,7 @@ const FatherRouter = require("./api/fatherdoc/fathers-documents-routes");
 const TeamregRouter = require("./api/TeamRegistration/teamRoutes");
 
 const app = express();
-const port = 9000;
+const port = process.env.PORT || 8080
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -56,6 +56,9 @@ sequelize
     console.error("Error syncing database:", err);
   });
 
+app.use('/_alive', async (req, res) => {
+      res.status(200).send("Welcome to vitsinco.com")
+  });
 app.use("/users", userRouter);
 app.use("/candidate", candidateRouter);
 app.use("/candidate-address", candidateAddressRouter);
