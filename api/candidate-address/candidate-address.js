@@ -9,15 +9,23 @@ CandidteAddress.init(
       allowNull: true,
     },
     city_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: true,
     },
     state_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: true,
     },
-    contry_id: {
-      type: DataTypes.INTEGER,
+    district_id: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    postal_id: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    country_id: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
     stay_from_date: {
@@ -28,12 +36,8 @@ CandidteAddress.init(
       type: DataTypes.DATE,
       allowNull: true,
     },
-    hoouse_type: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
-    address_type: {
-      type: DataTypes.INTEGER,
+    house_type: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
     address_proof_file: {

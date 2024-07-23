@@ -1,15 +1,14 @@
-const logger = require('../config/logger');
+const logger = require("../config/logger");
 
 const _getAll = async (req, res, modalName) => {
   try {
     const response = await modalName.findAll();
-  return response;
+    return response;
   } catch (error) {
     logger.error(error);
     res.status(500).json({ error: error.message });
   }
 };
-
 
 const _getDataListById = async (req, res, modalName, fieldName, fieldValue) => {
   try {
@@ -44,7 +43,7 @@ const _delete = async (req, res, modalName) => {
         id: req.body.id,
       },
     });
-    return response
+    return response;
   } catch (error) {
     logger.error(error);
     res.status(500).json({ error: error.message });
@@ -55,7 +54,7 @@ const _add = async (req, res, modalName) => {
   try {
     const response = await modalName.create(req.body);
     console.log(response);
-   return response;
+    return response;
   } catch (error) {
     logger.error(error);
     res.status(500).json({ error: error.message });

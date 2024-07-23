@@ -24,6 +24,10 @@ CandidteReference.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    ref_relationship: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     candidate_id: {
       type: DataTypes.INTEGER,
       allowNull: true,

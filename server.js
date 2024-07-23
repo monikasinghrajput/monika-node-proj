@@ -16,6 +16,12 @@ const candidateVerificationRouter = require("./api/candidate-verification/candid
 const clientRouter = require("./api/client/client-route");
 const featureRouter = require("./api/feature/feature-route");
 const internalTeamRouter = require("./api/internal-team/internal_team-route");
+// const locationRouter = require("./api/geolocation/locationRoutes");
+const locationRouter = require("./api/locationCSC/locationRoutes");
+
+const WorkingRouter = require("./api/WorkingExperiance/work-experience-routes");
+const FatherRouter = require("./api/fatherdoc/fathers-documents-routes");
+const TeamregRouter = require("./api/TeamRegistration/teamRoutes");
 
 const app = express();
 const port = 9000;
@@ -42,7 +48,7 @@ app.use(authenticate);
 */
 
 sequelize
-  .sync()
+  .sync({ alter: true })
   .then(() => {
     console.log("Database synced successfully.");
   })
@@ -61,6 +67,11 @@ app.use("/candidate-verification", candidateVerificationRouter);
 app.use("/client", clientRouter);
 app.use("/feature", featureRouter);
 app.use("/internal-team", internalTeamRouter);
+// app.use("/location", locationRouter);
+app.use("/location", locationRouter);
+app.use("/workingExp", WorkingRouter);
+app.use("/fathers-document", FatherRouter);
+app.use("/internal-tea", TeamregRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

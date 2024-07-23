@@ -33,3 +33,24 @@
 2024-07-16T07:12:19.739Z [localhost] error: Validation error
 2024-07-16T07:12:20.945Z [localhost] error: Validation error
 2024-07-16T07:12:26.820Z [localhost] error: Validation error
+2024-07-19T06:55:49.443Z [localhost] error: modalName.findAll is not a function
+2024-07-19T06:57:01.826Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:00:07.701Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:00:09.050Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:00:10.142Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:00:33.262Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:04:25.673Z [localhost] error: Model.findAll is not a function
+2024-07-19T07:04:27.328Z [localhost] error: Model.findAll is not a function
+2024-07-19T07:07:28.167Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:07:29.366Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:07:30.481Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:07:31.439Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:12:26.968Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:12:28.311Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:12:29.356Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:19:09.791Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:19:11.217Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:19:12.370Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:19:47.647Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:25:32.401Z [localhost] error: modalName.findAll is not a function
+2024-07-19T07:28:42.182Z [localhost] error: notNull Violation: User.username cannot be null

@@ -5,6 +5,8 @@ const CandidteDocs = require("../candidate-docs/candidte-docs");
 const CandidteEduction = require("../candidate-eduction/candidte-eduction");
 const CandidteReference = require("../candidate-reference/candidte-reference");
 const CandidteVerification = require("../candidate-verification/candidte-verification");
+const FathersDocuments = require("../fatherdoc/fathers-documents");
+const WorkingExperiance = require("../WorkingExperiance/work-experience");
 
 const REST_API = require("../../util/api-util");
 const mailer = require("../../config/mailer");
@@ -77,7 +79,7 @@ const createCandidate = async (req, res) => {
         subject: "Please fill your Form",
         html: `UserName: ${userResponse.username} <br>
                Password: ${userResponse.password} <br>
-               <a href="http://localhost:3000/auth/login?id=${candidateResponse.id}">Login</a>`,
+               <a href="https://dashboard.vitsinco.com/auth/login?id=${candidateResponse.id}">Login</a>`,
       };
 
       mailer.sendMail(mailOptions, (error, info) => {
@@ -120,6 +122,8 @@ const getCandidteById = async (req, res) => {
         CandidteEduction,
         CandidteReference,
         CandidteVerification,
+        FathersDocuments,
+        WorkingExperiance,
       ],
     });
     res.status(200).json(response);

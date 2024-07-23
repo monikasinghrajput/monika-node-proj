@@ -33,3 +33,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# Ignore environment variables file
+.env
+
+# Ignore the config/data-source.js file
+config/data-source.js
+
+# Ignore node_modules directory
+node_modules/
+

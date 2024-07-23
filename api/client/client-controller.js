@@ -8,6 +8,8 @@ const CandidteDocs = require("../candidate-docs/candidte-docs");
 const CandidteEduction = require("../candidate-eduction/candidte-eduction");
 const CandidteReference = require("../candidate-reference/candidte-reference");
 const CandidteVerification = require("../candidate-verification/candidte-verification");
+const FathersDocuments = require("../fatherdoc/fathers-documents");
+const WorkingExperiance = require("../WorkingExperiance/work-experience");
 
 // Define the createClient controller function
 const createClient = async (req, res) => {

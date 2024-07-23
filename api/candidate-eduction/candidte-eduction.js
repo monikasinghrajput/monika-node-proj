@@ -25,19 +25,19 @@ CandidteEduction.init(
       allowNull: true,
     },
     passing_year: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DATE,
       allowNull: true,
     },
     roll_number: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING,
       allowNull: true,
     },
     grade: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    marks: {
-      type: DataTypes.INTEGER,
+    gpa_percentage: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
     certificate: {
@@ -62,6 +62,34 @@ CandidteEduction.init(
     },
     updatedAt: {
       type: DataTypes.TIME,
+      allowNull: true,
+    },
+    highest_qualify: {
+      type: DataTypes.ENUM("12th", "Graduation", "Master's", "PhD", "Other"),
+      allowNull: true,
+    },
+    country: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    state: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    city: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    duration_start: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    duration_end: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    certificate_number: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
   },

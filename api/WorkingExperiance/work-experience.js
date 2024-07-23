@@ -1,46 +1,66 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../../config/data-source"); // Import the sequelize instance
 
-class CandidteCibil extends Model {}
-CandidteCibil.init(
+class WorkExperience extends Model {}
+WorkExperience.init(
   {
-    pan_number: {
+    companyName: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    father_name: {
+    companyEmail: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    pan_card: {
+    companyLocation: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    employeeId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    designation: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    from: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    to: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    salary: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    salarySlip: {
       type: DataTypes.BLOB,
       allowNull: true,
     },
-    cibil_score: {
+    reasonForLeaving: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    cibil_report: {
+    relievingLetter: {
       type: DataTypes.BLOB,
       allowNull: true,
     },
-    aadhar_number: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    aadhar_card: {
+    experienceLetter: {
       type: DataTypes.BLOB,
       allowNull: true,
     },
-    candidate_id: {
+    candidateId: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    created_by: {
+    createdBy: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    updated_by: {
+    updatedBy: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
@@ -55,9 +75,9 @@ CandidteCibil.init(
   },
   {
     sequelize, // Pass the sequelize instance here
-    modelName: "CandidteCibil", // Choose the model name
-    tableName: "candidate_cibil",
+    modelName: "WorkExperience", // Choose the model name
+    tableName: "work_experiences",
   }
 );
 
-module.exports = CandidteCibil; // Use module.exports for consistency
+module.exports = WorkExperience; // Use module.exports for consistency
