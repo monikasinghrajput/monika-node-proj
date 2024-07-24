@@ -1,12 +1,12 @@
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  host: "restaurantapp.in",
-  port: 587,
-  secure: false, // Use `true` for port 465, `false` for all other ports
+  host: "email-smtp.ap-south-1.amazonaws.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: "info@restaurantapp.in",
-    pass: "bgVerification!@#45",
+    user: "AKIA5FTZAM6B6BVREUUG",
+    pass: "BN9WORax6Pj0VXgtUcwDkmVLgkplDJoUpaquw+RyKzS4",
   },
   tls: {
     rejectUnauthorized: false  // Allow self-signed certificates
