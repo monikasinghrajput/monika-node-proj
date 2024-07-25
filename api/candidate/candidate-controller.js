@@ -74,7 +74,7 @@ const createCandidate = async (req, res) => {
       );
 
       const mailOptions = {
-        from: "noreply@verification.vitsinco.com",
+        from: "info@vitsinco.com",
         to: candidateEmail,
         subject: "Please fill your Form",
         html: `UserName: ${userResponse.username} <br>
