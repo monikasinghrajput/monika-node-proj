@@ -4,12 +4,7 @@ const Candidte = require("../candidate/candidte");
 
 // Define the createCandidate controller function
 const createCandidateAddress = async (req, res) => {
-  const response = await REST_API._add(req, res, CandidteAddress);
-   /* await Candidte.update({persent_completed:30}, {
-    where: {
-      id: req.body.candidate_id,
-    },
-  }); */
+  let response = await CandidteAddress.createBulk(req.body);
   res.status(200).json(response);
 };
 
@@ -30,7 +25,16 @@ const getAddressByCandidteId = async (req, res) => {
   res.status(201).json(response);
 };
 const updateCandidteAddress = async (req, res) => {
-  const response = await REST_API._update(req, res, CandidteAddress);
+  let response;
+  for (let address of req.body) {
+    response = await CandidteAddress.update(address, {
+      where: {
+        candidate_id: address.candidate_id,
+        id:address.id
+      },
+    });
+    
+  }
   res.status(201).json(response);
 };
 
