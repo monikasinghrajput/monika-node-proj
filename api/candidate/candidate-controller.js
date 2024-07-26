@@ -101,7 +101,16 @@ const createCandidate = async (req, res) => {
 const getCandidteList = async (req, res) => {
   try {
     const response = await Candidte.findAll({
-      include: CandidateAddress,
+      include: [
+        CandidateAddress,
+        CandidateCIBL,
+        CandidteDocs,
+        CandidteEduction,
+        CandidteReference,
+        CandidteVerification,
+        FathersDocuments,
+        WorkingExperiance,
+      ],
     });
     res.status(200).json(response);
   } catch (error) {
