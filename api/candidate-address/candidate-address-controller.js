@@ -4,7 +4,7 @@ const Candidte = require("../candidate/candidte");
 
 // Define the createCandidate controller function
 const createCandidateAddress = async (req, res) => {
-  let response = await CandidteAddress.createBulk(req.body);
+  let response = await CandidteAddress.bulkCreate(req.body);
   res.status(200).json(response);
 };
 
@@ -30,10 +30,9 @@ const updateCandidteAddress = async (req, res) => {
     response = await CandidteAddress.update(address, {
       where: {
         candidate_id: address.candidate_id,
-        id:address.id
+        id: address.id,
       },
     });
-    
   }
   res.status(201).json(response);
 };
