@@ -4,6 +4,10 @@ const sequelize = require("../../config/data-source"); // Import the sequelize i
 class CandidteAddress extends Model {}
 CandidteAddress.init(
   {
+    address_type: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     full_address: {
       type: DataTypes.TEXT,
       allowNull: true,
