@@ -4,6 +4,10 @@ const sequelize = require("../../config/data-source"); // Import the sequelize i
 class WorkExperience extends Model {}
 WorkExperience.init(
   {
+    experience_type: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     companyName: {
       type: DataTypes.STRING,
       allowNull: true,

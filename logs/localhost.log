@@ -54,3 +54,15 @@
 2024-07-19T07:19:47.647Z [localhost] error: modalName.findAll is not a function
 2024-07-19T07:25:32.401Z [localhost] error: modalName.findAll is not a function
 2024-07-19T07:28:42.182Z [localhost] error: notNull Violation: User.username cannot be null
+2024-07-26T17:27:54.409Z [localhost] error: this.build(...).save is not a function
+2024-07-26T17:29:11.429Z [localhost] error: this.build(...).save is not a function
+2024-07-26T17:29:13.147Z [localhost] error: this.build(...).save is not a function
+2024-07-26T17:30:10.788Z [localhost] error: this.build(...).save is not a function
+2024-07-26T17:33:53.910Z [localhost] error: this.build(...).save is not a function
+2024-07-26T17:33:55.525Z [localhost] error: this.build(...).save is not a function
+2024-07-26T17:36:31.024Z [localhost] error: this.build(...).save is not a function
+2024-07-26T17:36:50.010Z [localhost] error: this.build(...).save is not a function
+2024-07-26T17:36:51.455Z [localhost] error: this.build(...).save is not a function
+2024-07-26T17:37:15.071Z [localhost] error: this.build(...).save is not a function
+2024-07-26T17:37:16.430Z [localhost] error: this.build(...).save is not a function
+2024-07-26T17:40:05.909Z [localhost] error: this.build(...).save is not a function

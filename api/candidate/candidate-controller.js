@@ -75,13 +75,34 @@ const createCandidate = async (req, res) => {
 
       const mailOptions = {
         from: "info@vitsinco.com",
-        to: candidateEmail,
+        to: candidateEmail, // Send email to candidate
         subject: "Please fill your Form",
-        html: `UserName: ${userResponse.username} <br>
-               Password: ${userResponse.password} <br>
-               <a href="https://dashboard.vitsinco.com/auth/login?id=${candidateResponse.id}">Login</a>`,
+        html: `
+    <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Dear ${req.body.name},</p>
+    <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Welcome to <strong style="color: #0056b3;">Vitsinco global consulting private limited</strong></p>
+    <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Post to your appointment in <b> ${req.body.client_id} </b>. We request you to provide the necessary information to initiate your Background Verification process.</p>
+    <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Kindly click on the link <a href="https://dashboard.vitsinco.com/auth/login?id=${candidateResponse.id}" style="color: #0056b3; text-decoration: none;">Login</a> to enter the necessary information for Background Verification:</p>
+    <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%; max-width: 600px; font-family: Arial, sans-serif; font-size: 16px;">
+      <tr style="background-color: #f8f9fa;">
+        <th style="background-color: #0056b3; color: #ffffff; padding: 10px; text-align: left;">User ID</th>
+        <td style="padding: 10px; color: #333;">${userResponse.username}</td>
+      </tr>
+      <tr style="background-color: #e9ecef;">
+        <th style="background-color: #0056b3; color: #ffffff; padding: 10px; text-align: left;">Password</th>
+        <td style="padding: 10px; color: #333;">${userResponse.password}</td>
+      </tr>
+      <tr style="background-color: #f8f9fa;">
+        <th style="background-color: #0056b3; color: #ffffff; padding: 10px; text-align: left;">Mobile No.</th>
+        <td style="padding: 10px; color: #333;">${req.body.mobile_no}</td>
+      </tr>
+    </table>
+    <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333; margin-top: 20px;">For any further clarification contact us at <a href="mailto:bgc@vitsinco.in" style="color: #0056b3; text-decoration: none;">bgc@vitsinco.in</a></p>
+    <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">This is an auto-generated email. Please do not reply to this email.</p>
+    <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Thanks and Regards,<br><strong style="color: #0056b3;">BGC Team</strong></p>
+  `,
       };
 
+      // Send email and handle response
       mailer.sendMail(mailOptions, (error, info) => {
         if (error) {
           console.log(error);
@@ -90,7 +111,12 @@ const createCandidate = async (req, res) => {
         console.log("Message sent: %s", info.messageId);
         res.status(200).send("Email sent successfully");
       });
+
+      // Returning here to prevent further code execution
+      return;
     }
+
+    // Response if email is not sent
     res.status(200).json(candidateResponse);
   } catch (error) {
     console.error("Error creating candidate:", error);

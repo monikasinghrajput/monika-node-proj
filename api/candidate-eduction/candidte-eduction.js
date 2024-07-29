@@ -1,9 +1,15 @@
 const { DataTypes, Model } = require("sequelize");
-const sequelize = require("../../config/data-source"); // Import the sequelize instance
+const sequelize = require("../../config/data-source");
+
+
 
 class CandidteEduction extends Model {}
 CandidteEduction.init(
   {
+    education_type: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     name_of_certificate: {
       type: DataTypes.STRING,
       allowNull: true,
