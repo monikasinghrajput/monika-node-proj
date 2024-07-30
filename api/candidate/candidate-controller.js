@@ -109,7 +109,6 @@ const createCandidate = async (req, res) => {
           return res.status(500).send(error.toString());
         }
         console.log("Message sent: %s", info.messageId);
-        res.status(200).send("Email sent successfully");
       });
 
       // Returning here to prevent further code execution
