@@ -56,7 +56,7 @@ WorkExperience.init(
       type: DataTypes.BLOB,
       allowNull: true,
     },
-    candidateId: {
+    candidate_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },

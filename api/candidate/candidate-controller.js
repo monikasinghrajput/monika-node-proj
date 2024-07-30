@@ -79,7 +79,7 @@ const createCandidate = async (req, res) => {
         subject: "Please fill your Form",
         html: `
     <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Dear ${req.body.name},</p>
-    <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Welcome to <strong style="color: #0056b3;">Vitsinco global consulting private limited</strong></p>
+    <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Welcome to <strong style="color: #0056b3;">Vitsinco Global Consulting Private Limited</strong></p>
     <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Post to your appointment in <b> ${req.body.client_id} </b>. We request you to provide the necessary information to initiate your Background Verification process.</p>
     <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Kindly click on the link <a href="https://dashboard.vitsinco.com/auth/login?id=${candidateResponse.id}" style="color: #0056b3; text-decoration: none;">Login</a> to enter the necessary information for Background Verification:</p>
     <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%; max-width: 600px; font-family: Arial, sans-serif; font-size: 16px;">
