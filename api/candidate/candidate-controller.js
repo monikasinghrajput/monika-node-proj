@@ -72,6 +72,7 @@ const createCandidate = async (req, res) => {
           where: { id: candidateResponse.id },
         }
       );
+    }
 
       const mailOptions = {
         from: "info@vitsinco.com",
@@ -110,10 +111,6 @@ const createCandidate = async (req, res) => {
         }
         console.log("Message sent: %s", info.messageId);
       });
-
-      // Returning here to prevent further code execution
-      return;
-    }
 
     // Response if email is not sent
     res.status(200).json(candidateResponse);
