@@ -1,7 +1,8 @@
 const { DataTypes, Model } = require("sequelize");
-const sequelize = require("../../config/data-source"); // Import the sequelize instance
+const sequelize = require("../../config/data-source");
 
 class InternalTeam extends Model {}
+
 InternalTeam.init(
   {
     name: {
@@ -19,6 +20,25 @@ InternalTeam.init(
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
+    },
+    client_id: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    candidate_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    user_role: {
+      type: DataTypes.ENUM(
+        "GenInfo",
+        "EducationInfo",
+        "AddressInfo",
+        "CibilInfo",
+        "ReferenceInfo",
+        "ExperienceInfo"
+      ),
+      allowNull: false,
     },
     created_by: {
       type: DataTypes.INTEGER,
@@ -38,10 +58,10 @@ InternalTeam.init(
     },
   },
   {
-    sequelize, // Pass the sequelize instance here
-    modelName: "InternalTeam", // Choose the model name
+    sequelize,
+    modelName: "InternalTeam",
     tableName: "internal_team",
   }
 );
 
-module.exports = InternalTeam; // Use module.exports for consistency
+module.exports = InternalTeam;
