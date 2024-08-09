@@ -2,6 +2,16 @@ const InternalTeam = require("./internal_team");
 const User = require("../user/user");
 const mailer = require("../../config/mailer");
 
+// Role mapping
+const roleMapping = {
+  4: "GenInfo",
+  5: "EducationInfo",
+  6: "AddressInfo",
+  7: "CibilInfo",
+  8: "ReferenceInfo",
+  9: "ExperienceInfo",
+};
+
 const createInternalTeam = async (req, res) => {
   try {
     const {
@@ -15,27 +25,18 @@ const createInternalTeam = async (req, res) => {
       updated_by,
     } = req.body;
 
-    // Log the role value to verify it's being received correctly
     console.log("Received role:", role);
 
-    // Validate user_role
-    const validRoles = [
-      "GenInfo",
-      "EducationInfo",
-      "AddressInfo",
-      "CibilInfo",
-      "ReferenceInfo",
-      "ExperienceInfo",
-    ];
+    // Map numeric role to role name
+    const roleName = roleMapping[role];
 
-    if (!validRoles.includes(role)) {
+    if (!roleName) {
       return res.status(400).json({
         msg: "Invalid role",
         isError: true,
       });
     }
 
-    // Check if internal team member already exists
     const existingMember = await InternalTeam.findOne({ where: { email_id } });
     if (existingMember) {
       return res.status(200).json({
@@ -44,33 +45,30 @@ const createInternalTeam = async (req, res) => {
       });
     }
 
-    // Create internal team member
     const internalTeamResponse = await InternalTeam.create({
       name,
       email_id,
       mobile_number,
-      user_role: role, // Ensure role is set correctly
+      user_role: roleName,
       client_id,
       candidate_id,
       created_by,
       updated_by,
     });
 
-    // Create user
     const userResponse = await User.create({
       username: email_id,
-      password: mobile_number, // Consider hashing this password
-      user_role: role,
+      password: mobile_number,
+      user_role: roleName,
       email: email_id,
       user_source_id: internalTeamResponse.id,
     });
 
-    // Prepare and send email
     await sendWelcomeEmail(
       email_id,
       userResponse.username,
       userResponse.password,
-      role, // Send the role as-is
+      roleName,
       internalTeamResponse.id
     );
 
@@ -127,7 +125,7 @@ const getInternalTeamById = async (req, res) => {
 
 const updateInternalTeam = async (req, res) => {
   try {
-    const { id, ...updateData } = req.body;
+    const { id, role, ...updateData } = req.body;
 
     if (!id) {
       return res.status(400).json({
@@ -136,13 +134,18 @@ const updateInternalTeam = async (req, res) => {
       });
     }
 
-    // Ensure updateData contains user_role and not role
-    if (updateData.role) {
-      updateData.user_role = updateData.role;
-      delete updateData.role; // Remove role field if it exists
+    // Map numeric role to role name for update
+    if (role) {
+      const roleName = roleMapping[role];
+      if (!roleName) {
+        return res.status(400).json({
+          msg: "Invalid role",
+          isError: true,
+        });
+      }
+      updateData.user_role = roleName;
     }
 
-    // Log the update data to debug
     console.log("Update Data:", updateData);
 
     const [updated] = await InternalTeam.update(updateData, {
@@ -209,7 +212,7 @@ const loginInternalTeam = async (req, res) => {
       });
     }
 
-    const roleName = internalTeamMember.user_role; // Directly return the role
+    const roleName = internalTeamMember.user_role;
 
     res.status(200).json({
       message: "Login successful",
@@ -265,4 +268,5 @@ module.exports = {
   updateInternalTeam,
   deleteInternalTeam,
   loginInternalTeam,
+  sendWelcomeEmail,
 };
