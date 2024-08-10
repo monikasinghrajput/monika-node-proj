@@ -8,13 +8,33 @@ Team.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    email_id: {
+    client_id: {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    candidate_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    email_id: {
+      type: DataTypes.STRING,
+      allowNull: false, // Email should be required
+    },
     mobile_number: {
       type: DataTypes.STRING,
+      allowNull: false, // Mobile number should be required
+    },
+    user_role: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    process_list: {
+      type: DataTypes.STRING,
       allowNull: true,
+    },
+    status: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
     createdBy: {
       type: DataTypes.INTEGER,
