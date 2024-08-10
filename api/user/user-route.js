@@ -27,7 +27,20 @@ router.post("/login", async (req, res) => {
       obj.candidate_id = user.user_source_id;
     } else if (user.user_role === 2) {
       obj.client_id = user.user_source_id;
+    } else if (user.user_role === 4) {
+      // Role 4 (EducationTeam) specific action
+      obj.education_team_id = user.user_source_id;
+    } else if (user.user_role === 5) {
+      // Role 5 (AddressTeam) specific action
+      obj.address_team_id = user.user_source_id;
+    } else if (user.user_role === 6) {
+      // Role 6 (ExperienceTeam) specific action
+      obj.experience_team_id = user.user_source_id;
+    } else {
+      // Default action for undefined roles
+      console.log("Undefined role");
     }
+
     res.json(obj);
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
