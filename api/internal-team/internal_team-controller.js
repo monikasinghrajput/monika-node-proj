@@ -173,10 +173,19 @@ const updateInternalTeam = async (req, res) => {
 
 const deleteInternalTeam = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.body;
+    console.log("ID to delete:", id); // Add this line to log the ID
+    if (!id) {
+      return res.status(400).json({
+        message: "ID is missing in the request body",
+        isError: true,
+      });
+    }
+
     const deleted = await InternalTeam.destroy({
       where: { id: id },
     });
+
     if (deleted) {
       res
         .status(200)
