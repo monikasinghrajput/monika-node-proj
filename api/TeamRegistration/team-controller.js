@@ -13,7 +13,7 @@ const createTeam = async (req, res) => {
   try {
     const {
       email_id: teamEmail,
-      user_role: roleId,
+      role: roleId,
       mobile_number,
       token,
       process_list,
@@ -41,7 +41,7 @@ const createTeam = async (req, res) => {
     const userObj = {
       username: teamEmail,
       password: mobile_number,
-      user_role: roleId,
+      role: roleId,
       email: teamEmail,
       user_source_id: teamResponse.id,
     };

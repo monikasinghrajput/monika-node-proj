@@ -24,7 +24,7 @@ Team.init(
       type: DataTypes.STRING,
       allowNull: false, // Mobile number should be required
     },
-    user_role: {
+    role: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
