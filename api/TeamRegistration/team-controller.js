@@ -59,7 +59,7 @@ const createTeam = async (req, res) => {
     }
 
     // Get the role name without modifying the user object
-    const roleName = roles[roleId] || "";
+    const roleName = roles[roleId] || `Role${roleId}`;
 
     // Create user and send email in parallel
     const [userResponse] = await Promise.all([
@@ -115,7 +115,7 @@ const getAllTeams = async (req, res) => {
       if (team.process_list) {
         team.process_list = team.process_list.split(",");
       }
-      team.role = roles[team.user_role] || "";
+      team.role = roles[team.user_role] || `Role${team.user_role}`;
     });
     res.status(200).json(response);
   } catch (error) {
@@ -134,7 +134,7 @@ const getTeamById = async (req, res) => {
     if (response.process_list) {
       response.process_list = response.process_list.split(",");
     }
-    response.role = roles[response.user_role] || "";
+    response.role = roles[response.user_role] || `Role${response.user_role}`;
     res.status(200).json(response);
   } catch (error) {
     console.error("Error fetching team:", error);
@@ -165,7 +165,8 @@ const updateTeam = async (req, res) => {
     if (updatedTeam.process_list) {
       updatedTeam.process_list = updatedTeam.process_list.split(",");
     }
-    updatedTeam.role = roles[updatedTeam.user_role] || "";
+    updatedTeam.role =
+      roles[updatedTeam.user_role] || `Role${updatedTeam.user_role}`;
 
     res.status(200).json(updatedTeam);
   } catch (error) {
