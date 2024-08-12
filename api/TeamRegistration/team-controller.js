@@ -4,9 +4,18 @@ const mailer = require("../../config/mailer");
 const User = require("../user/user");
 
 const roles = {
+  2: "ClientTeam",
+  3: "CandidateTeam",
   4: "EducationTeam",
   5: "AddressTeam",
   6: "ExperienceTeam",
+};
+
+const getRoleName = (roleId) => {
+  const userRole = Number(roleId);
+  return !isNaN(userRole)
+    ? roles[userRole] || `Role${userRole}`
+    : "Undefined Role";
 };
 
 const createTeam = async (req, res) => {
@@ -58,8 +67,7 @@ const createTeam = async (req, res) => {
       userObj[fieldMap[roleId]] = teamResponse.id;
     }
 
-    // Get the role name without modifying the user object
-    const roleName = roles[roleId] || `Role${roleId}`;
+    const roleName = getRoleName(roleId);
 
     // Create user and send email in parallel
     const [userResponse] = await Promise.all([
@@ -111,13 +119,15 @@ const sendWelcomeEmail = (email, teamId, password, roleName) => {
 const getAllTeams = async (req, res) => {
   try {
     const response = await REST_API._getAll(req, res, Team);
-    response.forEach((team) => {
-      if (team.process_list) {
-        team.process_list = team.process_list.split(",");
+    const teamsWithRoles = response.map((team) => {
+      const teamData = team.toJSON ? team.toJSON() : team;
+      if (teamData.process_list) {
+        teamData.process_list = teamData.process_list.split(",");
       }
-      team.role = roles[team.user_role] || `Role${team.user_role}`;
+      teamData.role = getRoleName(teamData.user_role);
+      return teamData;
     });
-    res.status(200).json(response);
+    res.status(200).json(teamsWithRoles);
   } catch (error) {
     console.error("Error fetching teams:", error);
     res.status(500).json({ msg: "Internal server error", isError: "true" });
@@ -131,11 +141,12 @@ const getTeamById = async (req, res) => {
     if (!response) {
       return res.status(404).json({ msg: "Team not found", isError: "true" });
     }
-    if (response.process_list) {
-      response.process_list = response.process_list.split(",");
+    const teamData = response.toJSON ? response.toJSON() : response;
+    if (teamData.process_list) {
+      teamData.process_list = teamData.process_list.split(",");
     }
-    response.role = roles[response.user_role] || `Role${response.user_role}`;
-    res.status(200).json(response);
+    teamData.role = getRoleName(teamData.user_role);
+    res.status(200).json(teamData);
   } catch (error) {
     console.error("Error fetching team:", error);
     res.status(500).json({ msg: "Internal server error", isError: "true" });
@@ -161,14 +172,14 @@ const updateTeam = async (req, res) => {
     }
 
     const updatedTeam = await team.update(req.body);
+    const teamData = updatedTeam.toJSON();
 
-    if (updatedTeam.process_list) {
-      updatedTeam.process_list = updatedTeam.process_list.split(",");
+    if (teamData.process_list) {
+      teamData.process_list = teamData.process_list.split(",");
     }
-    updatedTeam.role =
-      roles[updatedTeam.user_role] || `Role${updatedTeam.user_role}`;
+    teamData.role = getRoleName(teamData.user_role);
 
-    res.status(200).json(updatedTeam);
+    res.status(200).json(teamData);
   } catch (error) {
     console.error("Error updating team:", error);
     res.status(500).json({ msg: "Internal server error", isError: "true" });
