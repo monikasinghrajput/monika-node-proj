@@ -58,20 +58,29 @@ const createTeam = async (req, res) => {
       userObj[fieldMap[roleId]] = teamResponse.id;
     }
 
+    // Get the role name without modifying the user object
+    const roleName = roles[roleId] || "";
+
     // Create user and send email in parallel
     const [userResponse] = await Promise.all([
       User.create(userObj),
-      sendWelcomeEmail(teamEmail, teamResponse.id, mobile_number),
+      sendWelcomeEmail(teamEmail, teamResponse.id, mobile_number, roleName),
     ]);
 
-    res.status(200).json(teamResponse);
+    // Add role information to the response
+    const responseWithRole = {
+      ...teamResponse.toJSON(),
+      role: roleName,
+    };
+
+    res.status(200).json(responseWithRole);
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ msg: "Internal server error", isError: "true" });
   }
 };
 
-const sendWelcomeEmail = (email, teamId, password) => {
+const sendWelcomeEmail = (email, teamId, password, roleName) => {
   return new Promise((resolve, reject) => {
     const mailOptions = {
       from: "info@vitsinco.com",
@@ -82,6 +91,7 @@ const sendWelcomeEmail = (email, teamId, password) => {
         <p>Your team has been created successfully.</p>
         <p>Username: ${email}</p>
         <p>Password: ${password}</p>
+        <p>Role: ${roleName}</p>
         <p><a href="dashboard.vitsinco.com/auth/login?id=${teamId}">Login</a></p>
       `,
     };
@@ -98,11 +108,6 @@ const sendWelcomeEmail = (email, teamId, password) => {
   });
 };
 
-module.exports = {
-  createTeam,
-};
-
-
 const getAllTeams = async (req, res) => {
   try {
     const response = await REST_API._getAll(req, res, Team);
@@ -110,6 +115,7 @@ const getAllTeams = async (req, res) => {
       if (team.process_list) {
         team.process_list = team.process_list.split(",");
       }
+      team.role = roles[team.user_role] || "";
     });
     res.status(200).json(response);
   } catch (error) {
@@ -128,6 +134,7 @@ const getTeamById = async (req, res) => {
     if (response.process_list) {
       response.process_list = response.process_list.split(",");
     }
+    response.role = roles[response.user_role] || "";
     res.status(200).json(response);
   } catch (error) {
     console.error("Error fetching team:", error);
@@ -158,6 +165,7 @@ const updateTeam = async (req, res) => {
     if (updatedTeam.process_list) {
       updatedTeam.process_list = updatedTeam.process_list.split(",");
     }
+    updatedTeam.role = roles[updatedTeam.user_role] || "";
 
     res.status(200).json(updatedTeam);
   } catch (error) {
