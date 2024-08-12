@@ -13,24 +13,18 @@ const roles = {
 
 const getRoleName = (roleId) => {
   const userRole = Number(roleId);
-  return !isNaN(userRole)
-    ? roles[userRole] || `Role${userRole}`
-    : "Undefined Role";
+  return !isNaN(userRole) ? userRole : undefined;
 };
 
 const createTeam = async (req, res) => {
   try {
     const {
       email_id: teamEmail,
-      user_role,
       role,
       mobile_number,
       token,
       process_list,
     } = req.body;
-
-    // Use user_role if available, otherwise use role
-    const roleId = user_role || role;
 
     if (!teamEmail) {
       return res
@@ -38,13 +32,8 @@ const createTeam = async (req, res) => {
         .json({ msg: "Email is required", isError: "true" });
     }
 
-    if (!roleId) {
-      return res
-        .status(400)
-        .json({ msg: "User role is required", isError: "true" });
-    }
+    const user_role = role;
 
-    // Check if team already exists and create team in parallel
     const [existingTeam, teamResponse] = await Promise.all([
       Team.findOne({ where: { email_id: teamEmail } }),
       REST_API._add(req, res, Team),
@@ -56,17 +45,15 @@ const createTeam = async (req, res) => {
         .json({ msg: "Email already exists", isError: "true" });
     }
 
-    // Prepare user object
     const userObj = {
       username: teamEmail,
       password: mobile_number,
-      user_role: roleId,
+      user_role: user_role,
       email: teamEmail,
       user_source_id: teamResponse.id,
     };
 
-    // Add role-specific fields
-    if (roleId >= 2 && roleId <= 6) {
+    if (user_role >= 2 && user_role <= 6) {
       const fieldMap = {
         2: "client_id",
         3: "candidate_id",
@@ -74,23 +61,20 @@ const createTeam = async (req, res) => {
         5: "address_team_id",
         6: "experience_team_id",
       };
-      userObj[fieldMap[roleId]] = teamResponse.id;
+      userObj[fieldMap[user_role]] = teamResponse.id;
     }
 
-    const roleName = getRoleName(roleId);
-
-    // Create user and send email in parallel
     const [userResponse] = await Promise.all([
       User.create(userObj),
-      sendWelcomeEmail(teamEmail, teamResponse.id, mobile_number, roleName),
+      sendWelcomeEmail(teamEmail, teamResponse.id, mobile_number, user_role),
     ]);
 
-    // Add role information to the response
     const responseWithRole = {
       ...teamResponse.toJSON(),
-      role: roleName,
-      user_role: roleId,
+      role: user_role,
     };
+
+    delete responseWithRole.user_role;
 
     res.status(200).json(responseWithRole);
   } catch (error) {
@@ -100,7 +84,31 @@ const createTeam = async (req, res) => {
 };
 
 const sendWelcomeEmail = (email, teamId, password, roleName) => {
-  // This function remains unchanged
+  return new Promise((resolve, reject) => {
+    const mailOptions = {
+      from: "info@vitsinco.com",
+      to: email,
+      subject: "Welcome to Our Service",
+      html: `
+        <p>Dear ${email},</p>
+        <p>Your team has been created successfully.</p>
+        <p>Username: ${email}</p>
+        <p>Password: ${password}</p>
+        <p>Role: ${roles[roleName] || `Role${roleName}`}</p>
+        <p><a href="dashboard.vitsinco.com/auth/login?id=${teamId}">Login</a></p>
+      `,
+    };
+
+    mailer.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+        reject(error);
+      } else {
+        console.log("Message sent: %s", info.messageId);
+        resolve(info);
+      }
+    });
+  });
 };
 
 const getAllTeams = async (req, res) => {
@@ -112,6 +120,7 @@ const getAllTeams = async (req, res) => {
         teamData.process_list = teamData.process_list.split(",");
       }
       teamData.role = getRoleName(teamData.user_role);
+      delete teamData.user_role;
       return teamData;
     });
     res.status(200).json(teamsWithRoles);
@@ -133,6 +142,7 @@ const getTeamById = async (req, res) => {
       teamData.process_list = teamData.process_list.split(",");
     }
     teamData.role = getRoleName(teamData.user_role);
+    delete teamData.user_role;
     res.status(200).json(teamData);
   } catch (error) {
     console.error("Error fetching team:", error);
@@ -142,23 +152,20 @@ const getTeamById = async (req, res) => {
 
 const updateTeam = async (req, res) => {
   try {
-    const { id, user_role, role, process_list } = req.body;
+    const { id } = req.body;
     if (!id) {
       return res
         .status(400)
         .json({ msg: "Team ID is required", isError: "true" });
     }
 
-    // Use user_role if available, otherwise use role
-    const roleId = user_role || role;
-
-    const updateData = { ...req.body };
-    if (roleId) {
-      updateData.user_role = roleId;
+    if (req.body.process_list && Array.isArray(req.body.process_list)) {
+      req.body.process_list = req.body.process_list.join(",");
     }
 
-    if (process_list && Array.isArray(process_list)) {
-      updateData.process_list = process_list.join(",");
+    if (req.body.role !== undefined) {
+      req.body.user_role = req.body.role;
+      delete req.body.role;
     }
 
     const team = await Team.findByPk(id);
@@ -166,13 +173,14 @@ const updateTeam = async (req, res) => {
       return res.status(404).json({ msg: "Team not found", isError: "true" });
     }
 
-    const updatedTeam = await team.update(updateData);
+    const updatedTeam = await team.update(req.body);
     const teamData = updatedTeam.toJSON();
 
     if (teamData.process_list) {
       teamData.process_list = teamData.process_list.split(",");
     }
     teamData.role = getRoleName(teamData.user_role);
+    delete teamData.user_role;
 
     res.status(200).json(teamData);
   } catch (error) {
@@ -182,7 +190,25 @@ const updateTeam = async (req, res) => {
 };
 
 const deleteTeam = async (req, res) => {
-  // This function remains unchanged
+  try {
+    const { id } = req.body;
+    if (!id) {
+      return res
+        .status(400)
+        .json({ msg: "Team ID is required", isError: "true" });
+    }
+
+    const team = await Team.findByPk(id);
+    if (!team) {
+      return res.status(404).json({ msg: "Team not found", isError: "true" });
+    }
+
+    await team.destroy();
+    res.status(200).json({ msg: "Team deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting team:", error);
+    res.status(500).json({ msg: "Internal server error", isError: "true" });
+  }
 };
 
 module.exports = {
