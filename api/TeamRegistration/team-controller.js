@@ -117,7 +117,7 @@ const getAllTeams = async (req, res) => {
       if (teamData.process_list) {
         teamData.process_list = teamData.process_list.split(",");
       }
-      teamData.role = getRoleName(teamData.user_role);
+      teamData.role = teamData.user_role; // assigning directly user_role
       return teamData;
     });
     res.status(200).json(teamsWithRoles);
@@ -138,7 +138,7 @@ const getTeamById = async (req, res) => {
     if (teamData.process_list) {
       teamData.process_list = teamData.process_list.split(",");
     }
-    teamData.role = getRoleName(teamData.user_role);
+    teamData.role = teamData.user_role; // assigning directly user_role
     res.status(200).json(teamData);
   } catch (error) {
     console.error("Error fetching team:", error);
