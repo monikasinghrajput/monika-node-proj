@@ -20,7 +20,7 @@ const createTeam = async (req, res) => {
   try {
     const {
       email_id: teamEmail,
-      role,
+      user_role,
       mobile_number,
       token,
       process_list,
@@ -31,8 +31,6 @@ const createTeam = async (req, res) => {
         .status(400)
         .json({ msg: "Email is required", isError: "true" });
     }
-
-    const user_role = role;
 
     const [existingTeam, teamResponse] = await Promise.all([
       Team.findOne({ where: { email_id: teamEmail } }),
@@ -71,7 +69,8 @@ const createTeam = async (req, res) => {
 
     const responseWithRole = {
       ...teamResponse.toJSON(),
-      role: getRoleName(user_role),
+      user_role: Number(user_role),
+      role_name: getRoleName(user_role),
     };
 
     res.status(200).json(responseWithRole);
@@ -117,7 +116,8 @@ const getAllTeams = async (req, res) => {
       if (teamData.process_list) {
         teamData.process_list = teamData.process_list.split(",");
       }
-      teamData.role = teamData.user_role; // assigning directly user_role
+      teamData.user_role = Number(teamData.user_role);
+      teamData.role_name = getRoleName(teamData.user_role);
       return teamData;
     });
     res.status(200).json(teamsWithRoles);
@@ -138,7 +138,8 @@ const getTeamById = async (req, res) => {
     if (teamData.process_list) {
       teamData.process_list = teamData.process_list.split(",");
     }
-    teamData.role = teamData.user_role; // assigning directly user_role
+    teamData.user_role = Number(teamData.user_role);
+    teamData.role_name = getRoleName(teamData.user_role);
     res.status(200).json(teamData);
   } catch (error) {
     console.error("Error fetching team:", error);
@@ -159,11 +160,6 @@ const updateTeam = async (req, res) => {
       req.body.process_list = req.body.process_list.join(",");
     }
 
-    if (req.body.role !== undefined) {
-      req.body.user_role = req.body.role;
-      delete req.body.role;
-    }
-
     const team = await Team.findByPk(id);
     if (!team) {
       return res.status(404).json({ msg: "Team not found", isError: "true" });
@@ -175,7 +171,8 @@ const updateTeam = async (req, res) => {
     if (teamData.process_list) {
       teamData.process_list = teamData.process_list.split(",");
     }
-    teamData.role = getRoleName(teamData.user_role);
+    teamData.user_role = Number(teamData.user_role);
+    teamData.role_name = getRoleName(teamData.user_role);
 
     res.status(200).json(teamData);
   } catch (error) {
