@@ -13,7 +13,7 @@ const roles = {
 
 const getRoleName = (roleId) => {
   const userRole = Number(roleId);
-  return !isNaN(userRole) ? userRole : undefined;
+  return !isNaN(userRole) ? roles[userRole] || `Role${userRole}` : undefined;
 };
 
 const createTeam = async (req, res) => {
@@ -71,10 +71,8 @@ const createTeam = async (req, res) => {
 
     const responseWithRole = {
       ...teamResponse.toJSON(),
-      role: user_role,
+      role: getRoleName(user_role),
     };
-
-    delete responseWithRole.user_role;
 
     res.status(200).json(responseWithRole);
   } catch (error) {
@@ -120,7 +118,6 @@ const getAllTeams = async (req, res) => {
         teamData.process_list = teamData.process_list.split(",");
       }
       teamData.role = getRoleName(teamData.user_role);
-      delete teamData.user_role;
       return teamData;
     });
     res.status(200).json(teamsWithRoles);
@@ -142,7 +139,6 @@ const getTeamById = async (req, res) => {
       teamData.process_list = teamData.process_list.split(",");
     }
     teamData.role = getRoleName(teamData.user_role);
-    delete teamData.user_role;
     res.status(200).json(teamData);
   } catch (error) {
     console.error("Error fetching team:", error);
@@ -180,7 +176,6 @@ const updateTeam = async (req, res) => {
       teamData.process_list = teamData.process_list.split(",");
     }
     teamData.role = getRoleName(teamData.user_role);
-    delete teamData.user_role;
 
     res.status(200).json(teamData);
   } catch (error) {
