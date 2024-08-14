@@ -11,11 +11,6 @@ const roles = {
   6: "ExperienceTeam",
 };
 
-const getRoleName = (roleId) => {
-  const userRole = Number(roleId);
-  return !isNaN(userRole) ? roles[userRole] || `Role${userRole}` : undefined;
-};
-
 const createTeam = async (req, res) => {
   try {
     const {
@@ -69,8 +64,7 @@ const createTeam = async (req, res) => {
 
     const responseWithRole = {
       ...teamResponse.toJSON(),
-      user_role: Number(user_role),
-      role_name: getRoleName(user_role),
+      user_role: user_role,
     };
 
     res.status(200).json(responseWithRole);
@@ -80,7 +74,7 @@ const createTeam = async (req, res) => {
   }
 };
 
-const sendWelcomeEmail = (email, teamId, password, roleName) => {
+const sendWelcomeEmail = (email, teamId, password, user_role) => {
   return new Promise((resolve, reject) => {
     const mailOptions = {
       from: "info@vitsinco.com",
@@ -91,7 +85,7 @@ const sendWelcomeEmail = (email, teamId, password, roleName) => {
         <p>Your team has been created successfully.</p>
         <p>Username: ${email}</p>
         <p>Password: ${password}</p>
-        <p>Role: ${roles[roleName] || `Role${roleName}`}</p>
+        <p>Role: ${roles[user_role] || `Role${user_role}`}</p>
         <p><a href="dashboard.vitsinco.com/auth/login?id=${teamId}">Login</a></p>
       `,
     };
@@ -116,8 +110,8 @@ const getAllTeams = async (req, res) => {
       if (teamData.process_list) {
         teamData.process_list = teamData.process_list.split(",");
       }
-      teamData.user_role = Number(teamData.user_role);
-      teamData.role_name = getRoleName(teamData.user_role);
+      teamData.user_role =
+        roles[teamData.user_role] || `Role${teamData.user_role}`;
       return teamData;
     });
     res.status(200).json(teamsWithRoles);
@@ -138,8 +132,8 @@ const getTeamById = async (req, res) => {
     if (teamData.process_list) {
       teamData.process_list = teamData.process_list.split(",");
     }
-    teamData.user_role = Number(teamData.user_role);
-    teamData.role_name = getRoleName(teamData.user_role);
+    teamData.user_role =
+      roles[teamData.user_role] || `Role${teamData.user_role}`;
     res.status(200).json(teamData);
   } catch (error) {
     console.error("Error fetching team:", error);
@@ -171,8 +165,8 @@ const updateTeam = async (req, res) => {
     if (teamData.process_list) {
       teamData.process_list = teamData.process_list.split(",");
     }
-    teamData.user_role = Number(teamData.user_role);
-    teamData.role_name = getRoleName(teamData.user_role);
+    teamData.user_role =
+      roles[teamData.user_role] || `Role${teamData.user_role}`;
 
     res.status(200).json(teamData);
   } catch (error) {
