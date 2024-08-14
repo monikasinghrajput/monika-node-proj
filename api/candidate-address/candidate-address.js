@@ -45,7 +45,7 @@ CandidteAddress.init(
       allowNull: true,
     },
     address_proof_file: {
-      type: DataTypes.BLOB,
+      type: DataTypes.STRING, // Store the file path as a string
       allowNull: true,
     },
     address_proof: {
