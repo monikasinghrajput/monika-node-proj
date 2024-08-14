@@ -1,5 +1,5 @@
 const User = require("./user"); // Ensure the correct path
-const crypto = require("crypto");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = "bgverification";
 
@@ -8,8 +8,18 @@ const REST_API = require("../../util/api-util");
 // Define the createUser controller function
 const createUser = async (req, res) => {
   console.log("inside createUser");
-  const response = await REST_API._add(req, res, User);
-  res.status(200).json(response);
+
+  try {
+    const { password } = req.body;
+    // Hash the password before saving the user
+    const hashedPassword = await bcrypt.hash(password, 10);
+    req.body.password = hashedPassword;
+
+    const response = await REST_API._add(req, res, User);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 const getUsers = async (req, res) => {
@@ -26,28 +36,36 @@ const getUserById = async (req, res) => {
     "id",
     userId
   );
-  res.status(201).json(response);
+  res.status(200).json(response);
 };
 
 const updateUser = async (req, res) => {
-  const response = await REST_API._update(req, res, User);
-  res.status(201).json(response);
+  try {
+    const { password } = req.body;
+    if (password) {
+      // Hash the new password before updating
+      const hashedPassword = await bcrypt.hash(password, 10);
+      req.body.password = hashedPassword;
+    }
+
+    const response = await REST_API._update(req, res, User);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 const deleteUser = async (req, res) => {
   const response = await REST_API._delete(req, res, User);
-  res.status(201).json(response);
+  res.status(200).json(response);
 };
 
 exports.verifyUser = async (username, password) => {
   const user = await User.findOne({ where: { username: username } });
   if (!user) return null;
 
-  // Assuming you have a method to compare the hashed password
-  const isMatch = crypto.timingSafeEqual(
-    Buffer.from(user.password),
-    Buffer.from(password)
-  ); // Update this line as per your hashing mechanism
+  // Compare the hashed password using bcrypt
+  const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) return null;
 
   const token = exports.generateToken(user);
@@ -66,5 +84,4 @@ exports.createUser = createUser;
 exports.getUsers = getUsers;
 exports.getUserById = getUserById;
 exports.updateUser = updateUser;
-
 exports.deleteUser = deleteUser;
