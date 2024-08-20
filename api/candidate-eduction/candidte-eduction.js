@@ -1,8 +1,6 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../../config/data-source");
 
-
-
 class CandidteEduction extends Model {}
 CandidteEduction.init(
   {
@@ -10,20 +8,8 @@ CandidteEduction.init(
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    name_of_certificate: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     course_name: {
       type: DataTypes.STRING,
-      allowNull: true,
-    },
-    institution_name: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    institution_address: {
-      type: DataTypes.TEXT,
       allowNull: true,
     },
     university_name: {
@@ -38,10 +24,7 @@ CandidteEduction.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    grade: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+
     gpa_percentage: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -70,10 +53,6 @@ CandidteEduction.init(
       type: DataTypes.TIME,
       allowNull: true,
     },
-    highest_qualify: {
-      type: DataTypes.ENUM("12th", "Graduation", "Master's", "PhD", "Other"),
-      allowNull: true,
-    },
     country: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -84,14 +63,6 @@ CandidteEduction.init(
     },
     city: {
       type: DataTypes.STRING,
-      allowNull: true,
-    },
-    duration_start: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-    duration_end: {
-      type: DataTypes.DATE,
       allowNull: true,
     },
     certificate_number: {
