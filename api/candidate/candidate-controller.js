@@ -7,6 +7,7 @@ const CandidteReference = require("../candidate-reference/candidte-reference");
 const CandidteVerification = require("../candidate-verification/candidte-verification");
 const FathersDocuments = require("../fatherdoc/fathers-documents");
 const WorkingExperiance = require("../WorkingExperiance/work-experience");
+const sequelize = require("../../config/data-source");
 
 const REST_API = require("../../util/api-util");
 const mailer = require("../../config/mailer");
@@ -50,10 +51,38 @@ const createCandidate = async (req, res) => {
       ...req.body,
       persent_completed: 15,
     });
+    const condidateIdd = candidateResponse.id;
+
+    const conAddress = await CandidateAddress.create({
+      candidate_id: condidateIdd,
+    });
+    const CandCIBL = await CandidateCIBL.create({
+      candidate_id: condidateIdd,
+    });
+    const CandDoc = await CandidteDocs.create({
+      candidate_id: condidateIdd,
+    });
+
+    const CanEdu = await CandidteEduction.create({
+      candidate_id: condidateIdd,
+    });
+    const CanRef = await CandidteReference.create({
+      candidate_id: condidateIdd,
+    });
+
+    const FathersDoc = await FathersDocuments.create({
+      candidate_id: condidateIdd,
+    });
+
+    const Workxperiance = await WorkingExperiance.create({
+      candidate_id: condidateIdd,
+    });
+
     const userResponse = await User.create({
       username: candidateEmail,
       password: req.body.mobile_no,
       user_role: 3,
+      candidate_id: condidateIdd,
       email: candidateEmail,
       user_source_id: candidateResponse.id,
     });
@@ -74,11 +103,11 @@ const createCandidate = async (req, res) => {
       );
     }
 
-      const mailOptions = {
-        from: "info@vitsinco.com",
-        to: candidateEmail, // Send email to candidate
-        subject: "Please fill your Form",
-        html: `
+    const mailOptions = {
+      from: "info@vitsinco.com",
+      to: candidateEmail, // Send email to candidate
+      subject: "Please fill your Form",
+      html: `
     <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Dear ${req.body.name},</p>
     <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Welcome to <strong style="color: #0056b3;">Vitsinco Global Consulting Private Limited</strong></p>
     <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Post to your appointment in <b> ${req.body.client_id} </b>. We request you to provide the necessary information to initiate your Background Verification process.</p>
@@ -101,16 +130,16 @@ const createCandidate = async (req, res) => {
     <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">This is an auto-generated email. Please do not reply to this email.</p>
     <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">Thanks and Regards,<br><strong style="color: #0056b3;">BGC Team</strong></p>
   `,
-      };
+    };
 
-      // Send email and handle response
-      mailer.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log(error);
-          return res.status(500).send(error.toString());
-        }
-        console.log("Message sent: %s", info.messageId);
-      });
+    // Send email and handle response
+    mailer.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).send(error.toString());
+      }
+      console.log("Message sent: %s", info.messageId);
+    });
 
     // Response if email is not sent
     res.status(200).json(candidateResponse);
@@ -175,15 +204,63 @@ const updateCandidte = async (req, res) => {
 };
 
 const deleteCandidate = async (req, res) => {
+  const transaction = await sequelize.transaction();
   try {
-    const response = await REST_API._delete(req, res, Candidte);
-    res.status(200).json(response);
+    const { id } = req.body;
+
+    // Delete related records
+    await CandidateAddress.destroy({
+      where: { candidate_id: id },
+      transaction,
+    });
+    await CandidateCIBL.destroy({ where: { candidate_id: id }, transaction });
+    await CandidteDocs.destroy({ where: { candidate_id: id }, transaction });
+    await CandidteEduction.destroy({
+      where: { candidate_id: id },
+      transaction,
+    });
+    await CandidteReference.destroy({
+      where: { candidate_id: id },
+      transaction,
+    });
+    await CandidteVerification.destroy({
+      where: { candidate_id: id },
+      transaction,
+    });
+    await FathersDocuments.destroy({
+      where: { candidate_id: id },
+      transaction,
+    });
+    await WorkingExperiance.destroy({
+      where: { candidate_id: id },
+      transaction,
+    });
+    await User.destroy({
+      where: { candidate_id: id },
+      transaction,
+    });
+
+    // Delete the main candidate record
+    const deletedCandidate = await Candidte.destroy({
+      where: { id },
+      transaction,
+    });
+
+    if (deletedCandidate === 0) {
+      await transaction.rollback();
+      return res.status(404).json({ message: "Candidate not found" });
+    }
+
+    await transaction.commit();
+    res
+      .status(200)
+      .json({ message: "Candidate and related records deleted successfully" });
   } catch (error) {
+    await transaction.rollback();
     console.error("Error deleting candidate:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 exports.createCandidate = createCandidate;
 exports.getCandidteList = getCandidteList;
 exports.getCandidteById = getCandidteById;

@@ -5,6 +5,7 @@ const SECRET_KEY = "bgverification";
 
 const REST_API = require("../../util/api-util");
 
+//Role-based access control for different routes.
 // Define the createUser controller function
 const createUser = async (req, res) => {
   const response = await REST_API._add(req, res, User);

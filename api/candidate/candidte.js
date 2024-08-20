@@ -9,6 +9,8 @@ const CandidteVerification = require("../candidate-verification/candidte-verific
 const FathersDocuments = require("../fatherdoc/fathers-documents");
 const WorkingExperiance = require("../WorkingExperiance/work-experience");
 
+const User = require("../user/user");
+
 class Candidte extends Model {}
 Candidte.init(
   {
@@ -104,13 +106,51 @@ Candidte.init(
   }
 );
 
-Candidte.hasMany(CandidteAddress, { foreignKey: "candidate_id" });
-Candidte.hasMany(CandidateCIBL, { foreignKey: "candidate_id" });
-Candidte.hasMany(CandidteDocs, { foreignKey: "candidate_id" });
-Candidte.hasMany(CandidteEduction, { foreignKey: "candidate_id" });
-Candidte.hasMany(CandidteReference, { foreignKey: "candidate_id" });
-Candidte.hasMany(CandidteVerification, { foreignKey: "candidate_id" });
-Candidte.hasMany(FathersDocuments, { foreignKey: "candidate_id" });
-Candidte.hasMany(WorkingExperiance, { foreignKey: "candidate_id" });
+// Candidte.hasMany(CandidteAddress, { foreignKey: "candidate_id" });
+// Candidte.hasMany(CandidateCIBL, { foreignKey: "candidate_id" });
+// Candidte.hasMany(CandidteDocs, { foreignKey: "candidate_id" });
+// Candidte.hasMany(CandidteEduction, { foreignKey: "candidate_id" });
+// Candidte.hasMany(CandidteReference, { foreignKey: "candidate_id" });
+// Candidte.hasMany(CandidteVerification, { foreignKey: "candidate_id" });
+// Candidte.hasMany(FathersDocuments, { foreignKey: "candidate_id" });
+// Candidte.hasMany(WorkingExperiance, { foreignKey: "candidate_id" });
+
+Candidte.hasMany(CandidteAddress, {
+  foreignKey: "candidate_id",
+  onDelete: "CASCADE",
+});
+Candidte.hasMany(CandidateCIBL, {
+  foreignKey: "candidate_id",
+  onDelete: "CASCADE",
+});
+Candidte.hasMany(CandidteDocs, {
+  foreignKey: "candidate_id",
+  onDelete: "CASCADE",
+});
+Candidte.hasMany(CandidteEduction, {
+  foreignKey: "candidate_id",
+  onDelete: "CASCADE",
+});
+Candidte.hasMany(CandidteReference, {
+  foreignKey: "candidate_id",
+  onDelete: "CASCADE",
+});
+Candidte.hasMany(CandidteVerification, {
+  foreignKey: "candidate_id",
+  onDelete: "CASCADE",
+});
+Candidte.hasMany(FathersDocuments, {
+  foreignKey: "candidate_id",
+  onDelete: "CASCADE",
+});
+Candidte.hasMany(WorkingExperiance, {
+  foreignKey: "candidate_id",
+  onDelete: "CASCADE",
+});
+
+Candidte.hasMany(User, {
+  foreignKey: "candidate_id",
+  onDelete: "CASCADE",
+});
 
 module.exports = Candidte; // Use module.exports for consistency
