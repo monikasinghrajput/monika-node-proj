@@ -8,10 +8,6 @@ CandidteCibil.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    father_name: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     pan_card: {
       type: DataTypes.BLOB,
       allowNull: true,
