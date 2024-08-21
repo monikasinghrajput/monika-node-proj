@@ -24,8 +24,29 @@ const getCibilByCandidteId = async (req, res) => {
   res.status(201).json(response);
 };
 const updateCandidteCibil = async (req, res) => {
-  const response = await REST_API._update(req, res, CandidteCibil);
-  res.status(201).json(response);
+  // const response = await REST_API._update(req, res, CandidteCibil);
+  // res.status(201).json(response);
+
+  let response;
+  const { candidate_id, id, ...updateData } = req.body;
+
+  console.log("updateData");
+  const existEdu = await CandidteCibil.findOne({
+    where: { candidate_id, id },
+  });
+  console.log(existEdu, "data");
+
+  if (!existEdu) {
+    return res.status(404).json({ error: "Education not found" });
+  }
+
+  const [updatedRows] = await CandidteCibil.update(updateData, {
+    where: { candidate_id, id },
+  });
+  console.log(id);
+  response = { id, updated: updatedRows > 0 };
+  res.status(200).json(response);
+
 };
 
 const deleteCandidateCibil = async (req, res) => {
