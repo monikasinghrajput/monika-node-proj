@@ -53,30 +53,30 @@ const createCandidate = async (req, res) => {
     });
     const condidateIdd = candidateResponse.id;
 
-    const conAddress = await CandidateAddress.create({
-      candidate_id: condidateIdd,
-    });
-    const CandCIBL = await CandidateCIBL.create({
-      candidate_id: condidateIdd,
-    });
-    const CandDoc = await CandidteDocs.create({
-      candidate_id: condidateIdd,
-    });
+    // const conAddress = await CandidateAddress.create({
+    //   candidate_id: condidateIdd,
+    // });
+    // const CandCIBL = await CandidateCIBL.create({
+    //   candidate_id: condidateIdd,
+    // });
+    // const CandDoc = await CandidteDocs.create({
+    //   candidate_id: condidateIdd,
+    // });
 
-    const CanEdu = await CandidteEduction.create({
-      candidate_id: condidateIdd,
-    });
-    const CanRef = await CandidteReference.create({
-      candidate_id: condidateIdd,
-    });
+    // const CanEdu = await CandidteEduction.create({
+    //   candidate_id: condidateIdd,
+    // });
+    // const CanRef = await CandidteReference.create({
+    //   candidate_id: condidateIdd,
+    // });
 
-    const FathersDoc = await FathersDocuments.create({
-      candidate_id: condidateIdd,
-    });
+    // const FathersDoc = await FathersDocuments.create({
+    //   candidate_id: condidateIdd,
+    // });
 
-    const Workxperiance = await WorkingExperiance.create({
-      candidate_id: condidateIdd,
-    });
+    // const Workxperiance = await WorkingExperiance.create({
+    //   candidate_id: condidateIdd,
+    // });
 
     const userResponse = await User.create({
       username: candidateEmail,
