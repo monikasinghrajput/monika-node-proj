@@ -53,7 +53,7 @@ const createCandidate = async (req, res) => {
     });
     const condidateIdd = candidateResponse.id;
 
-    const conAddress = await CandidateAddress.create({
+    const conAddress = await CandidateAddress.bulkCreate({
       candidate_id: condidateIdd,
     });
     const CandCIBL = await CandidateCIBL.create({
