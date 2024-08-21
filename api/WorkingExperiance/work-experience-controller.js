@@ -10,8 +10,21 @@ const Candidte = require("../candidate/candidte");
 
 const createWorkExperience = async (req, res) => {
   try {
-    let response = await WorkExperience.bulkCreate(req.body);
-    res.status(201).json(response);
+    const workExp = req.body;
+    if (Array.isArray(workExp)) {
+      // Bulk create
+      const workExp = addressData.map((workExp) => ({
+        ...workExp,
+        address_proof_file: null, // We can't handle multiple file uploads in this setup
+      }));
+      response = await CandidteAddress.bulkCreate(workExp);
+    }
+
+
+    else{
+          let response = await WorkExperience.bulkCreate(req.body);
+          res.status(201).json(response);
+    }
   } catch (error) {
     console.error("Error creating work experiences:", error);
     res

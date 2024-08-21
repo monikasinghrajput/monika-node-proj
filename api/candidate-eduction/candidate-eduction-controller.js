@@ -4,8 +4,25 @@ const Candidte = require("../candidate/candidte");
 
 // Define the createCandidate controller function
 const createCandidateEduction = async (req, res) => {
-  let response = await CandidteEduction.bulkCreate(req.body);
-  res.status(200).json(response);
+  try {
+      const canEdu = req.body;
+      if (Array.isArray(canEdu)) {
+        // Bulk create
+        const canEdu = addressData.map((canEdu) => ({
+          ...canEdu,
+          address_proof_file: null, // We can't handle multiple file uploads in this setup
+        }));
+        response = await CandidteAddress.bulkCreate(canEdu);
+      } else {
+        let response = await CandidteEduction.bulkCreate(req.body);
+        res.status(200).json(response);
+      }
+  } catch (error) {
+     console.error("Error creating candidate education:", error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while creating candidate education." });
+  }
 };
 
 const getCandidteListEduction = async (req, res) => {

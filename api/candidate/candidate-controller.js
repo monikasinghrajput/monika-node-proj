@@ -63,7 +63,7 @@ const createCandidate = async (req, res) => {
       candidate_id: condidateIdd,
     });
 
-    const CanEdu = await CandidteEduction.create({
+    const CanEdu = await CandidteEduction.bulkCreate({
       candidate_id: condidateIdd,
     });
     const CanRef = await CandidteReference.create({
@@ -74,7 +74,7 @@ const createCandidate = async (req, res) => {
       candidate_id: condidateIdd,
     });
 
-    const Workxperiance = await WorkingExperiance.create({
+    const Workxperiance = await WorkingExperiance.bulkCreate({
       candidate_id: condidateIdd,
     });
 
