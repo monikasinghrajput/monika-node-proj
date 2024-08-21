@@ -56,12 +56,15 @@ const createCandidate = async (req, res) => {
     const conAddress = await CandidateAddress.bulkCreate([
       {
         candidate_id: condidateIdd,
+        address_type: "current address",
       },
       {
         candidate_id: condidateIdd,
+        address_type: "previous address",
       },
       {
         candidate_id: condidateIdd,
+        address_type: "permanet address",
       },
     ]);
     const CandCIBL = await CandidateCIBL.create({
@@ -74,12 +77,15 @@ const createCandidate = async (req, res) => {
     const CanEdu = await CandidteEduction.bulkCreate([
       {
         candidate_id: condidateIdd,
+        education_type:"current education"
       },
       {
         candidate_id: condidateIdd,
+        education_type:"previous education"
       },
       {
         candidate_id: condidateIdd,
+        education_type:"other education"
       },
     ]);
     const CanRef = await CandidteReference.create({
@@ -93,6 +99,15 @@ const createCandidate = async (req, res) => {
     const Workxperiance = await WorkingExperiance.bulkCreate([
       {
         candidate_id: condidateIdd,
+        experience_type: "current work experience ",
+      },
+      {
+        candidate_id: condidateIdd,
+        experience_type: "previous work experience ",
+      },
+      {
+        candidate_id: condidateIdd,
+        experience_type: "other work experience ",
       },
     ]);
 
