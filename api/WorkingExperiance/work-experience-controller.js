@@ -10,28 +10,26 @@ const Candidte = require("../candidate/candidte");
 
 const createWorkExperience = async (req, res) => {
   try {
-    const workExp = req.body;
+    let workExp = req.body;
+    let response;
     if (Array.isArray(workExp)) {
       // Bulk create
-      const workExp = addressData.map((workExp) => ({
+      const workExpv = workExp.map((workExp) => ({
         ...workExp,
-        address_proof_file: null, // We can't handle multiple file uploads in this setup
+        // address_proof_file: null, // We can't handle multiple file uploads in this setup
       }));
-      response = await CandidteAddress.bulkCreate(workExp);
+      response = await WorkExperience.bulkCreate(workExpv);
     }
-
-
     else{
-          let response = await WorkExperience.bulkCreate(req.body);
-          res.status(201).json(response);
+          response = await WorkExperience.create(workExp);
+         
     }
+     res.status(201).json(response);
+
   } catch (error) {
-    console.error("Error creating work experiences:", error);
-    res
-      .status(500)
-      .json({ message: "An error occurred while creating work experiences." });
-  }
+   res.status(500).json({error:error.message});
 };
+}
 
 const getWorkExperienceList = async (req, res) => {
   const response = await REST_API._getAll(req, res, WorkExperience);
@@ -51,16 +49,46 @@ const getWorkExperienceByCandidateId = async (req, res) => {
 };
 
 const updateWorkExperience = async (req, res) => {
-  let response;
-  for (let experence of req.body) {
-    response = await WorkExperience.update(experence, {
-      where: {
-        candidate_id: experence.candidate_id,
-        id: experence.id,
-      },
-    });
-  }
-  res.status(201).json(response);
+  
+
+    try {
+      let workExp = req.body;
+      let response;
+      if (Array.isArray(workExp)) {
+        // Bulk update
+        response = await Promise.all(
+          workExp.map(async (edu) => {
+            const [updatedRows] = await WorkExperience.update(edu, {
+              where: {
+                candidate_id: edu.candidate_id,
+                id: edu.id,
+              },
+            });
+            return { id: edu.id, updated: updatedRows > 0 };
+          })
+        );
+      } else {
+        // Single update
+        const { candidate_id, id, ...updateData } = eduData;
+
+        const existEdu = await CandidteEduction.findOne({
+          where: { candidate_id, id },
+        });
+
+        if (!existEdu) {
+          return res.status(404).json({ error: "Education not found" });
+        }
+
+        const [updatedRows] = await WorkExperience.update(updateData, {
+          where: { candidate_id, id },
+        });
+
+        response = { id, updated: updatedRows > 0 };
+      }
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json(error);
+    }
 };
 
 const deleteWorkExperience = async (req, res) => {
