@@ -42,18 +42,53 @@ const getEductionByCandidteId = async (req, res) => {
   res.status(201).json(response);
 };
 const updateCandidteEduction = async (req, res) => {
-  let response;
+try {
+  
+   let eduData = req.body;
+   let response;
 
-  for (let education of req.body) {
-    response = await CandidteEduction.update(education, {
-      where: {
-        candidate_id: education.candidate_id,
-        id: education.id,
-      },
-    });
-  }
-  res.status(201).json(response);
+   if (Array.isArray(eduData)) {
+     // Bulk update
+     response = await Promise.all(
+       eduData.map(async (edu) => {
+         const [updatedRows] = await CandidteEduction.update(edu, {
+           where: {
+             candidate_id: edu.candidate_id,
+             id: edu.id,
+           },
+         });
+         return { id: edu.id, updated: updatedRows > 0 };
+       })
+     );
+   }
+    else {
+     // Single update
+     const { candidate_id, id, ...updateData } = eduData;
 
+     const existEdu = await CandidteEduction.findOne({
+       where: { candidate_id, id },
+     });
+
+     if (!existEdu) {
+       return res.status(404).json({ error: "Education not found" });
+     }
+
+    //  updateData.address_proof_file = await handleFileUpload(
+    //    req,
+    //    existEdu.address_proof_file
+    //  );
+
+     const [updatedRows] = await CandidteEduction.update(updateData, {
+       where: { candidate_id, id },
+     });
+
+     response = { id, updated: updatedRows > 0 };
+   }
+   res.status(200).json(response);
+
+} catch (error) {
+  
+}
   // const response = await REST_API._update(req, res, CandidteEduction);
   // res.status(201).json(response);
 };
