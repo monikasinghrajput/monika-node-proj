@@ -77,15 +77,15 @@ const createCandidate = async (req, res) => {
     const CanEdu = await CandidteEduction.bulkCreate([
       {
         candidate_id: condidateIdd,
-        education_type:"current "
+        education_type: "current ",
       },
       {
         candidate_id: condidateIdd,
-        education_type:"previous "
+        education_type: "previous ",
       },
       {
         candidate_id: condidateIdd,
-        education_type:"other "
+        education_type: "other ",
       },
     ]);
     const CanRef = await CandidteReference.create({
@@ -99,15 +99,15 @@ const createCandidate = async (req, res) => {
     const Workxperiance = await WorkingExperiance.bulkCreate([
       {
         candidate_id: condidateIdd,
-        experience_type: "current work experience ",
+        experience_type: "current ",
       },
       {
         candidate_id: condidateIdd,
-        experience_type: "previous work experience ",
+        experience_type: "previous ",
       },
       {
         candidate_id: condidateIdd,
-        experience_type: "other work experience ",
+        experience_type: "other ",
       },
     ]);
 
