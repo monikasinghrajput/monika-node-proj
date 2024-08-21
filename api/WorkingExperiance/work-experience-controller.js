@@ -49,11 +49,10 @@ const getWorkExperienceByCandidateId = async (req, res) => {
 };
 
 const updateWorkExperience = async (req, res) => {
-  
-
     try {
       let workExp = req.body;
       let response;
+      console.log("workExp");
       if (Array.isArray(workExp)) {
         // Bulk update
         response = await Promise.all(
@@ -64,16 +63,20 @@ const updateWorkExperience = async (req, res) => {
                 id: edu.id,
               },
             });
+            console.log(edu.id);
             return { id: edu.id, updated: updatedRows > 0 };
           })
         );
-      } else {
+      }
+       else {
         // Single update
-        const { candidate_id, id, ...updateData } = eduData;
+        const { candidate_id, id, ...updateData } = workExp;
 
-        const existEdu = await CandidteEduction.findOne({
+        console.log("updateData");
+        const existEdu = await WorkExperience.findOne({
           where: { candidate_id, id },
         });
+        console.log(existEdu,"data");
 
         if (!existEdu) {
           return res.status(404).json({ error: "Education not found" });
@@ -83,8 +86,11 @@ const updateWorkExperience = async (req, res) => {
           where: { candidate_id, id },
         });
 
+
+        console.log(id);
         response = { id, updated: updatedRows > 0 };
       }
+      console.log(response);
       res.status(200).json(response);
     } catch (error) {
       res.status(500).json(error);
