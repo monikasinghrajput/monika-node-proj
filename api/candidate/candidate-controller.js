@@ -57,6 +57,12 @@ const createCandidate = async (req, res) => {
       {
         candidate_id: condidateIdd,
       },
+      {
+        candidate_id: condidateIdd,
+      },
+      {
+        candidate_id: condidateIdd,
+      },
     ]);
     const CandCIBL = await CandidateCIBL.create({
       candidate_id: condidateIdd,
