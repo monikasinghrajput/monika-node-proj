@@ -2,8 +2,50 @@ const CandidteReference = require("./candidte-reference"); // Ensure the correct
 const REST_API = require("../../util/api-util");
 
 // Define the createCandidate controller function
+// const createCandidateReference = async (req, res) => {
+
+//   console.log(req.body);
+//   const response = await REST_API._add(req, res, CandidteReference);
+//   res.status(200).json(response);
+// };
+
+
+
 const createCandidateReference = async (req, res) => {
-  const response = await REST_API._add(req, res, CandidteReference);
+  let response;
+  const { ...updateData } = req.body;
+  let update = updateData[0];
+  let candidate_id = update.candidate_id;
+  let id = update.id;
+  console.log(id, candidate_id);
+
+  console.log("updateData");
+  console.log(req.body);
+
+  const existEdu = await CandidteReference.findOne({
+    where: { candidate_id, id },
+  });
+  console.log("data");
+
+  if (!existEdu) {
+    return res.status(404).json({ error: " reference  not found" });
+  }
+
+  const [updatedRows] = await CandidteReference.update(
+    {
+      ref_name: req.body.ref_name,
+      ref_designation: req.body.ref_designation,
+      company_name: req.body.company_name,
+      ref_contact_num: req.body.ref_contact_num,
+      ref_email: req.body.ref_email,
+      ref_relationship: req.body.ref_relationship,
+    },
+    {
+      where: { candidate_id, id },
+    }
+  );
+  console.log(updatedRows);
+  response = { id, updated: updatedRows > 0 };
   res.status(200).json(response);
 };
 
