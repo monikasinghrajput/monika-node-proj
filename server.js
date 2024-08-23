@@ -79,24 +79,24 @@ const mysql = require('mysql2/promise');
 
 exports.handler = async (event) => {
     try {
-        // Retrieve database credentials from environment variables
-        const dbHost = process.env.RDS_HOSTNAME;
-        const dbUser = process.env.RDS_USERNAME;
-        const dbPassword = process.env.RDS_PASSWORD;
-        const dbName = process.env.RDS_DB_NAME;
-        const dbPort = process.env.PORT || 3306;
+        // Logging environment variables
+        console.log('DB_HOST:', process.env.DB_HOST);
+        console.log('DB_USER:', process.env.DB_USER);
 
         // Create a MySQL connection
         const connection = await mysql.createConnection({
-            host: dbHost,
-            port: dbPort,
-            user: dbUser,
-            password: dbPassword,
-            database: dbName
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT || 3306,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME
         });
 
-        // Query the database
-        const [rows, fields] = await connection.execute('SELECT * FROM your_table'); // Replace with your query
+        console.log('Connected to the database');
+
+        // Execute a query
+        const [rows, fields] = await connection.execute('SELECT * FROM your_table');
+        console.log('Query executed successfully', rows);
 
         // Close the connection
         await connection.end();
