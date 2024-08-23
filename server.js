@@ -58,11 +58,11 @@ app.use("/candidate-reference", candidateReferenceRouter);
 app.use("/candidate-verification", candidateVerificationRouter);
 app.use("/client", clientRouter);
 app.use("/feature", featureRouter);
-app.use("/internal-tea", internalTeamRouter);
+app.use("/internal-tea", internalTeamRouter); // Make sure this is the correct route
 app.use("/location", locationRouter);
 app.use("/workingExp", WorkingRouter);
 app.use("/fathers-document", FatherRouter);
-app.use("/internal-team", TeamregRouter);
+app.use("/internal-team", TeamregRouter); // Ensure consistency with route paths
 
 // Start the server locally (for testing purposes)
 if (process.env.NODE_ENV !== 'production') {
