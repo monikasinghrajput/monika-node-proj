@@ -1,102 +1,76 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const Sequelize = require("sequelize");
+const sequelize = require("./config/data-source");
 const cors = require("cors");
 const passport = require("./config/auth");
+const unless = require("express-unless");
 const awsServerlessExpress = require('aws-serverless-express');
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
-const { SecretsManagerClient, GetSecretValueCommand } = require("@aws-sdk/client-secrets-manager");
-const path = require('path');
-
 const app = express();
 
-// Initialize Secrets Manager client
-const secretsManager = new SecretsManagerClient({ region: "ap-south-1" });
+const userRouter = require("./api/user/user-route");
+const candidateRouter = require("./api/candidate/candidate-route");
+const candidateAddressRouter = require("./api/candidate-address/candidate-address-route");
+const candidateCibilRouter = require("./api/candidate-cibil/candidate-cibil-route");
+const candidateDocsRouter = require("./api/candidate-docs/candidate-docs-route");
+const candidateEductionRouter = require("./api/candidate-eduction/candidate-eduction-route");
+const candidateReferenceRouter = require("./api/candidate-reference/candidate-reference-route");
+const candidateVerificationRouter = require("./api/candidate-verification/candidate-verification-route");
+const clientRouter = require("./api/client/client-route");
+const featureRouter = require("./api/feature/feature-route");
+const internalTeamRouter = require("./api/internal-team/internal_team-route");
+const locationRouter = require("./api/locationCSC/locationRoutes");
 
-// Retrieve secret from Secrets Manager
-const getSecret = async (secretName) => {
-    try {
-        const command = new GetSecretValueCommand({ SecretId: secretName });
-        const response = await secretsManager.send(command);
-        if ('SecretString' in response) {
-            return JSON.parse(response.SecretString);
-        }
-        return null;
-    } catch (error) {
-        console.error("Error retrieving secrets:", error);
-        throw error;
-    }
-};
+const WorkingRouter = require("./api/WorkingExperiance/work-experience-routes");
+const FatherRouter = require("./api/fatherdoc/fathers-documents-routes");
+const TeamregRouter = require("./api/TeamRegistration/teamRoutes");
 
-// Middleware setup
+const path = require('path');
+const port = process.env.PORT || 8080;
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(awsServerlessExpressMiddleware.eventContext());
 
-// Static files setup
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Define routes
-app.use("/_alive", (req, res) => {
-    res.status(200).send("Welcome to vitsinco.com");
+sequelize
+  .sync({ alter: true })
+  .then(() => {
+    console.log("Database synced successfully.");
+  })
+  .catch((err) => {
+    console.error("Error syncing database:", err);
+  });
+
+app.use("/_alive", async (req, res) => {
+  res.status(200).send("Welcome to vitsinco.com");
 });
-app.use("/users", require("./api/user/user-route"));
-app.use("/candidate", require("./api/candidate/candidate-route"));
-app.use("/candidate-address", require("./api/candidate-address/candidate-address-route"));
-app.use("/candidate-cibil", require("./api/candidate-cibil/candidate-cibil-route"));
-app.use("/candidate-docs", require("./api/candidate-docs/candidate-docs-route"));
-app.use("/candidate-education", require("./api/candidate-eduction/candidate-eduction-route"));
-app.use("/candidate-reference", require("./api/candidate-reference/candidate-reference-route"));
-app.use("/candidate-verification", require("./api/candidate-verification/candidate-verification-route"));
-app.use("/client", require("./api/client/client-route"));
-app.use("/feature", require("./api/feature/feature-route"));
-app.use("/internal-tea", require("./api/internal-team/internal_team-route")); // Make sure this is the correct route
-app.use("/location", require("./api/locationCSC/locationRoutes"));
-app.use("/workingExp", require("./api/WorkingExperiance/work-experience-routes"));
-app.use("/fathers-document", require("./api/fatherdoc/fathers-documents-routes"));
-app.use("/internal-team", require("./api/TeamRegistration/teamRoutes")); // Ensure consistency with route paths
 
-// Initialize Sequelize with RDS credentials
-const initializeDatabase = async () => {
-    const secretName = "myRdsSecret"; // Replace with your actual secret name
-    const secret = await getSecret(secretName);
+app.use("/users", userRouter);
+app.use("/candidate", candidateRouter);
+app.use("/candidate-address", candidateAddressRouter);
+app.use("/candidate-cibil", candidateCibilRouter);
+app.use("/candidate-docs", candidateDocsRouter);
+app.use("/candidate-education", candidateEductionRouter);
+app.use("/candidate-reference", candidateReferenceRouter);
+app.use("/candidate-verification", candidateVerificationRouter);
+app.use("/client", clientRouter);
+app.use("/feature", featureRouter);
+app.use("/internal-tea", internalTeamRouter);
+app.use("/location", locationRouter);
+app.use("/workingExp", WorkingRouter);
+app.use("/fathers-document", FatherRouter);
+app.use("/internal-team", TeamregRouter);
 
-    if (!secret) {
-        throw new Error("No secret found");
-    }
-
-    const { RDS_DB_NAME, RDS_USERNAME, RDS_PASSWORD, RDS_HOSTNAME, RDS_PORT } = secret;
-
-    const sequelize = new Sequelize(RDS_DB_NAME, RDS_USERNAME, RDS_PASSWORD, {
-        host: RDS_HOSTNAME,
-        port: RDS_PORT || 3306,
-        dialect: 'mysql', // or 'postgres', etc.
-    });
-
-    // Test database connection
-    try {
-        await sequelize.authenticate();
-        console.log("Database connected successfully");
-        await sequelize.sync({ alter: true });
-        console.log("Database synced successfully.");
-    } catch (err) {
-        console.error("Error syncing database:", err);
-        throw err;
-    }
-};
-
-// Start the server locally (for testing purposes)
+// Start the server locally for testing
 if (process.env.NODE_ENV !== 'production') {
-    const port = process.env.PORT || 8080;
-    app.listen(port, () => {
-        console.log(`Server is running on http://localhost:${port}`);
-    });
+  app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+  });
 }
 
 // Export the handler for AWS Lambda
 const server = awsServerlessExpress.createServer(app);
-exports.handler = async (event, context) => {
-    await initializeDatabase();
-    return awsServerlessExpress.proxy(server, event, context);
-};
+exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context);
