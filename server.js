@@ -5,8 +5,9 @@ const cors = require("cors");
 const passport = require("./config/auth");
 const awsServerlessExpress = require('aws-serverless-express');
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
-const app = express();
+const path = require('path');
 
+// Import route modules
 const userRouter = require("./api/user/user-route");
 const candidateRouter = require("./api/candidate/candidate-route");
 const candidateAddressRouter = require("./api/candidate-address/candidate-address-route");
@@ -23,25 +24,19 @@ const WorkingRouter = require("./api/WorkingExperiance/work-experience-routes");
 const FatherRouter = require("./api/fatherdoc/fathers-documents-routes");
 const TeamregRouter = require("./api/TeamRegistration/teamRoutes");
 
-const path = require('path');
+const app = express();
 const port = process.env.PORT || 8080;
 
+// Middleware setup
 app.use(cors());
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(awsServerlessExpressMiddleware.eventContext());
 
+// Static file serving
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-sequelize
-  .sync({ alter: true })
-  .then(() => {
-    console.log("Database synced successfully.");
-  })
-  .catch((err) => {
-    console.error("Error syncing database:", err);
-  });
-
+// Route handlers
 app.use("/_alive", async (req, res) => {
   res.status(200).send("Welcome to vitsinco.com");
 });
@@ -56,11 +51,16 @@ app.use("/candidate-reference", candidateReferenceRouter);
 app.use("/candidate-verification", candidateVerificationRouter);
 app.use("/client", clientRouter);
 app.use("/feature", featureRouter);
-app.use("/internal-tea", internalTeamRouter);
+app.use("/internal-team", internalTeamRouter);
 app.use("/location", locationRouter);
 app.use("/workingExp", WorkingRouter);
 app.use("/fathers-document", FatherRouter);
-app.use("/internal-team", TeamregRouter);
+app.use("/team-registration", TeamregRouter);
+
+// Sync database
+sequelize.sync({ alter: true })
+  .then(() => console.log("Database synced successfully."))
+  .catch((err) => console.error("Error syncing database:", err));
 
 // Start the server locally for testing
 if (process.env.NODE_ENV !== 'production') {
