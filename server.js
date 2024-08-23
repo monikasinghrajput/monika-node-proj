@@ -20,7 +20,6 @@ const clientRouter = require("./api/client/client-route");
 const featureRouter = require("./api/feature/feature-route");
 const internalTeamRouter = require("./api/internal-team/internal_team-route");
 const locationRouter = require("./api/locationCSC/locationRoutes");
-
 const WorkingRouter = require("./api/WorkingExperiance/work-experience-routes");
 const FatherRouter = require("./api/fatherdoc/fathers-documents-routes");
 const TeamregRouter = require("./api/TeamRegistration/teamRoutes");
@@ -44,10 +43,12 @@ sequelize
     console.error("Error syncing database:", err);
   });
 
-app.use("/_alive", async (req, res) => {
-  res.status(200).send("Welcome to vitsinco.com");
+// Add the root route here
+app.get("/", (req, res) => {
+  res.status(200).send("Welcome to the internal API of vitsinco.com");
 });
 
+// Other routes
 app.use("/users", userRouter);
 app.use("/candidate", candidateRouter);
 app.use("/candidate-address", candidateAddressRouter);
