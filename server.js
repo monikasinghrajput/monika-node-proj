@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const sequelize = require("./config/data-source");
+const Sequelize = require("sequelize");
 const cors = require("cors");
 const passport = require("./config/auth");
 const awsServerlessExpress = require('aws-serverless-express');
@@ -33,6 +33,20 @@ app.use(awsServerlessExpressMiddleware.eventContext());
 // Static files setup
 const path = require('path');
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Retrieve database credentials from environment variables
+const dbName = process.env.RDS_DB_NAME;
+const dbUser = process.env.RDS_USERNAME;
+const dbPass = process.env.RDS_PASSWORD;
+const dbHost = process.env.RDS_HOSTNAME;
+const dbPort = process.env.RDS_PORT || 3306;
+
+// Initialize Sequelize with RDS credentials
+const sequelize = new Sequelize(dbName, dbUser, dbPass, {
+  host: dbHost,
+  port: dbPort,
+  dialect: 'mysql', // or 'postgres', etc.
+});
 
 // Database sync
 sequelize
