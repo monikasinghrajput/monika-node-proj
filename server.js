@@ -5,9 +5,8 @@ const cors = require("cors");
 const passport = require("./config/auth");
 const awsServerlessExpress = require('aws-serverless-express');
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
-const path = require('path');
+const app = express();
 
-// Import route modules
 const userRouter = require("./api/user/user-route");
 const candidateRouter = require("./api/candidate/candidate-route");
 const candidateAddressRouter = require("./api/candidate-address/candidate-address-route");
@@ -24,23 +23,22 @@ const WorkingRouter = require("./api/WorkingExperiance/work-experience-routes");
 const FatherRouter = require("./api/fatherdoc/fathers-documents-routes");
 const TeamregRouter = require("./api/TeamRegistration/teamRoutes");
 
-const app = express();
+const path = require('path');
 const port = process.env.PORT || 8080;
 
-// Middleware setup
 app.use(cors());
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(awsServerlessExpressMiddleware.eventContext());
 
-// Static file serving
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Route handlers
-app.use("/_alive", async (req, res) => {
-  res.status(200).send("Welcome to vitsinco.com");
+// Root route
+app.get("/", (req, res) => {
+  res.status(200).send("Welcome to the internal API of vitsinco.com");
 });
 
+// API routes
 app.use("/users", userRouter);
 app.use("/candidate", candidateRouter);
 app.use("/candidate-address", candidateAddressRouter);
@@ -56,11 +54,6 @@ app.use("/location", locationRouter);
 app.use("/workingExp", WorkingRouter);
 app.use("/fathers-document", FatherRouter);
 app.use("/team-registration", TeamregRouter);
-
-// Sync database
-sequelize.sync({ alter: true })
-  .then(() => console.log("Database synced successfully."))
-  .catch((err) => console.error("Error syncing database:", err));
 
 // Start the server locally for testing
 if (process.env.NODE_ENV !== 'production') {
