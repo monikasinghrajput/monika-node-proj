@@ -6,7 +6,10 @@ const passport = require("./config/auth");
 const awsServerlessExpress = require('aws-serverless-express');
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
 const app = express();
+const path = require('path');
+const port = process.env.PORT || 8080;
 
+// Import route modules
 const userRouter = require("./api/user/user-route");
 const candidateRouter = require("./api/candidate/candidate-route");
 const candidateAddressRouter = require("./api/candidate-address/candidate-address-route");
@@ -23,14 +26,19 @@ const WorkingRouter = require("./api/WorkingExperiance/work-experience-routes");
 const FatherRouter = require("./api/fatherdoc/fathers-documents-routes");
 const TeamregRouter = require("./api/TeamRegistration/teamRoutes");
 
-const path = require('path');
-const port = process.env.PORT || 8080;
-
+// Middleware setup
 app.use(cors());
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(awsServerlessExpressMiddleware.eventContext());
 
+// Logger Middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.originalUrl}`);
+  next();
+});
+
+// Serve static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Root route
@@ -54,6 +62,12 @@ app.use("/location", locationRouter);
 app.use("/workingExp", WorkingRouter);
 app.use("/fathers-document", FatherRouter);
 app.use("/team-registration", TeamregRouter);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 // Start the server locally for testing
 if (process.env.NODE_ENV !== 'production') {
