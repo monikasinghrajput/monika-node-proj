@@ -2,15 +2,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const sequelize = require("./config/data-source");
 const cors = require("cors");
-const passport = require("./config/auth");
-const awsServerlessExpress = require('aws-serverless-express');
-const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
-const app = express();
-const path = require('path');
-const port = process.env.PORT || 8080;
+const passport = require("./config/auth"); // Import your Passport configuration
+const unless = require("express-unless"); // Import express-unless
 
-// Import route modules
-const userRouter = require("./api/user/user-route");
+const userRouter = require("./api/user/user-route"); //hello
 const candidateRouter = require("./api/candidate/candidate-route");
 const candidateAddressRouter = require("./api/candidate-address/candidate-address-route");
 const candidateCibilRouter = require("./api/candidate-cibil/candidate-cibil-route");
@@ -21,32 +16,51 @@ const candidateVerificationRouter = require("./api/candidate-verification/candid
 const clientRouter = require("./api/client/client-route");
 const featureRouter = require("./api/feature/feature-route");
 const internalTeamRouter = require("./api/internal-team/internal_team-route");
+// const locationRouter = require("./api/geolocation/locationRoutes");
 const locationRouter = require("./api/locationCSC/locationRoutes");
+
 const WorkingRouter = require("./api/WorkingExperiance/work-experience-routes");
 const FatherRouter = require("./api/fatherdoc/fathers-documents-routes");
 const TeamregRouter = require("./api/TeamRegistration/teamRoutes");
 
-// Middleware setup
+const app = express();
+const port = process.env.PORT || 8080;
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(passport.initialize());
-app.use(awsServerlessExpressMiddleware.eventContext());
+const path=require('path')
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));//
 
-// Logger Middleware
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.originalUrl}`);
-  next();
+// Comment out the authentication middleware
+/*
+const authenticate = (req, res, next) => {
+  // Define paths to exclude from authentication
+  const excludePaths = ['/users', '/users/login'];
+  const shouldExclude = excludePaths.some(path => req.path.startsWith(path) && (path === req.path || path === '/users/login' || path === '/client' || path === '/users' && req.method === 'POST'));
+
+  if (shouldExclude) {
+    return next();
+  } else {
+    return passport.authenticate('bearer', { session: false })(req, res, next);
+  }
+};
+
+app.use(authenticate);
+*/
+
+sequelize
+  .sync({ alter: true })
+  .then(() => {
+    console.log("Database synced successfully.");
+  })
+  .catch((err) => {
+    console.error("Error syncing database:", err);
+  });
+
+app.use("/_alive", async (req, res) => {
+  res.status(200).send("Welcome to vitsinco.com");
 });
-
-// Serve static files
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// Root route
-app.get("/", (req, res) => {
-  res.status(200).send("Welcome to the internal API of vitsinco.com");
-});
-
-// API routes
 app.use("/users", userRouter);
 app.use("/candidate", candidateRouter);
 app.use("/candidate-address", candidateAddressRouter);
@@ -57,25 +71,13 @@ app.use("/candidate-reference", candidateReferenceRouter);
 app.use("/candidate-verification", candidateVerificationRouter);
 app.use("/client", clientRouter);
 app.use("/feature", featureRouter);
-app.use("/internal-team", internalTeamRouter);
+app.use("/internal-tea", internalTeamRouter);
+// app.use("/location", locationRouter);
 app.use("/location", locationRouter);
 app.use("/workingExp", WorkingRouter);
 app.use("/fathers-document", FatherRouter);
-app.use("/team-registration", TeamregRouter);
+app.use("/internal-team", TeamregRouter);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
-
-// Start the server locally for testing
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-  });
-}
-
-// Export the handler for AWS Lambda
-const server = awsServerlessExpress.createServer(app);
-exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context);
