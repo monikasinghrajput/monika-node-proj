@@ -3,11 +3,11 @@ const bodyParser = require("body-parser");
 const sequelize = require("./config/data-source");
 const cors = require("cors");
 const passport = require("./config/auth");
-const unless = require("express-unless");
 const awsServerlessExpress = require('aws-serverless-express');
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
 const app = express();
 
+// Import routers
 const userRouter = require("./api/user/user-route");
 const candidateRouter = require("./api/candidate/candidate-route");
 const candidateAddressRouter = require("./api/candidate-address/candidate-address-route");
@@ -20,21 +20,21 @@ const clientRouter = require("./api/client/client-route");
 const featureRouter = require("./api/feature/feature-route");
 const internalTeamRouter = require("./api/internal-team/internal_team-route");
 const locationRouter = require("./api/locationCSC/locationRoutes");
-
 const WorkingRouter = require("./api/WorkingExperiance/work-experience-routes");
 const FatherRouter = require("./api/fatherdoc/fathers-documents-routes");
 const TeamregRouter = require("./api/TeamRegistration/teamRoutes");
 
-const path = require('path');
-const port = process.env.PORT || 8080;
-
+// Middleware setup
 app.use(cors());
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(awsServerlessExpressMiddleware.eventContext());
 
+// Static files setup
+const path = require('path');
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Database sync
 sequelize
   .sync({ alter: true })
   .then(() => {
@@ -44,10 +44,10 @@ sequelize
     console.error("Error syncing database:", err);
   });
 
-app.use("/_alive", async (req, res) => {
+// Define routes
+app.use("/_alive", (req, res) => {
   res.status(200).send("Welcome to vitsinco.com");
 });
-
 app.use("/users", userRouter);
 app.use("/candidate", candidateRouter);
 app.use("/candidate-address", candidateAddressRouter);
@@ -64,8 +64,9 @@ app.use("/workingExp", WorkingRouter);
 app.use("/fathers-document", FatherRouter);
 app.use("/internal-team", TeamregRouter);
 
-// Start the server locally for testing
+// Start the server locally (for testing purposes)
 if (process.env.NODE_ENV !== 'production') {
+  const port = process.env.PORT || 8080;
   app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
   });
