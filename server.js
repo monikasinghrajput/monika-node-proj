@@ -74,3 +74,42 @@ if (process.env.NODE_ENV !== 'production') {
 // Export the handler for AWS Lambda
 const server = awsServerlessExpress.createServer(app);
 exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context);
+
+const mysql = require('mysql2/promise');
+
+exports.handler = async (event) => {
+    try {
+        // Retrieve database credentials from environment variables
+        const dbHost = process.env.RDS_HOSTNAME;
+        const dbUser = process.env.RDS_USERNAME;
+        const dbPassword = process.env.RDS_PASSWORD;
+        const dbName = process.env.RDS_DB_NAME;
+        const dbPort = process.env.PORT || 3306;
+
+        // Create a MySQL connection
+        const connection = await mysql.createConnection({
+            host: dbHost,
+            port: dbPort,
+            user: dbUser,
+            password: dbPassword,
+            database: dbName
+        });
+
+        // Query the database
+        const [rows, fields] = await connection.execute('SELECT * FROM your_table'); // Replace with your query
+
+        // Close the connection
+        await connection.end();
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Data fetched successfully', data: rows }),
+        };
+    } catch (error) {
+        console.error('Error:', error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: 'Error fetching data' }),
+        };
+    }
+};
