@@ -4,20 +4,35 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const awsServerlessExpress = require('aws-serverless-express');
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
-const Sequelize = require('sequelize');
+const { Sequelize } = require('sequelize');
 const path = require('path');
+
+const userRouter = require('./api/user/user-route');
+const candidateRouter = require('./api/candidate/candidate-route');
+const candidateAddressRouter = require('./api/candidate-address/candidate-address-route');
+const candidateCibilRouter = require('./api/candidate-cibil/candidate-cibil-route');
+const candidateDocsRouter = require('./api/candidate-docs/candidate-docs-route');
+const candidateEducationRouter = require('./api/candidate-eduction/candidate-eduction-route');
+const candidateReferenceRouter = require('./api/candidate-reference/candidate-reference-route');
+const candidateVerificationRouter = require('./api/candidate-verification/candidate-verification-route');
+const clientRouter = require('./api/client/client-route');
+const featureRouter = require('./api/feature/feature-route');
+const internalTeamRouter = require('./api/internal-team/internal_team-route');
+const locationRouter = require('./api/locationCSC/locationRoutes');
+const WorkingRouter = require('./api/WorkingExperiance/work-experience-routes');
+const FatherRouter = require('./api/fatherdoc/fathers-documents-routes');
+const TeamregRouter = require('./api/TeamRegistration/teamRoutes');
 
 // Initialize AWS Secrets Manager
 const secretsManager = new AWS.SecretsManager({ region: 'ap-south-1' });
 
-// Function to get the secret from AWS Secrets Manager
 async function getSecretValue(secretName) {
   try {
     const data = await secretsManager.getSecretValue({ SecretId: secretName }).promise();
     if ('SecretString' in data) {
       return JSON.parse(data.SecretString);
     } else {
-      let buff = Buffer.from(data.SecretBinary, 'base64');
+      let buff = new Buffer.from(data.SecretBinary, 'base64');
       return JSON.parse(buff.toString('ascii'));
     }
   } catch (err) {
@@ -26,65 +41,44 @@ async function getSecretValue(secretName) {
   }
 }
 
-// Create Express app
 const app = express();
 const port = process.env.PORT || 8080;
 
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(awsServerlessExpressMiddleware.eventContext());
-
-// Serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(passport.initialize());
 
-// Define your routes
-app.use('/_alive', (req, res) => {
+// API Routes
+app.use('/_alive', async (req, res) => {
   res.status(200).send('Welcome to vitsinco.com');
 });
-
-// Define all your routers here
-const userRouter = require('./api/user/user-route');
-const candidateRouter = require('./api/candidate/candidate-route');
-const candidateAddressRouter = require('./api/candidate-address/candidate-address-route');
-const candidateCibilRouter = require('./api/candidate-cibil/candidate-cibil-route');
-const candidateDocsRouter = require('./api/candidate-docs/candidate-docs-route');
-const candidateEductionRouter = require('./api/candidate-eduction/candidate-eduction-route');
-const candidateReferenceRouter = require('./api/candidate-reference/candidate-reference-route');
-const candidateVerificationRouter = require('./api/candidate-verification/candidate-verification-route');
-const clientRouter = require('./api/client/client-route');
-const featureRouter = require('./api/feature/feature-route');
-const internalTeamRouter = require('./api/internal-team/internal_team-route');
-const locationRouter = require('./api/locationCSC/locationRoutes');
-const workingRouter = require('./api/WorkingExperiance/work-experience-routes');
-const fatherRouter = require('./api/fatherdoc/fathers-documents-routes');
-const teamRegRouter = require('./api/TeamRegistration/teamRoutes');
-
 app.use('/users', userRouter);
 app.use('/candidate', candidateRouter);
 app.use('/candidate-address', candidateAddressRouter);
 app.use('/candidate-cibil', candidateCibilRouter);
 app.use('/candidate-docs', candidateDocsRouter);
-app.use('/candidate-education', candidateEductionRouter);
+app.use('/candidate-education', candidateEducationRouter);
 app.use('/candidate-reference', candidateReferenceRouter);
 app.use('/candidate-verification', candidateVerificationRouter);
 app.use('/client', clientRouter);
 app.use('/feature', featureRouter);
 app.use('/internal-team', internalTeamRouter);
 app.use('/location', locationRouter);
-app.use('/workingExp', workingRouter);
-app.use('/fathers-document', fatherRouter);
-app.use('/team-registration', teamRegRouter);
+app.use('/workingExp', WorkingRouter);
+app.use('/fathers-document', FatherRouter);
+app.use('/internal-team', TeamregRouter);
 
-// Initialize Sequelize
-let sequelize;
-
+// Sync database
 app.use(async (req, res, next) => {
   try {
-    const secretName = 'myRdsSecrets'; // Replace with your secret name
+    const secretName = 'rds-db-credentials/awseb-e-i6edbiy8te-stack-awsebrdsdatabase-viwwidl6767v/admin/1724434328596';
     const secret = await getSecretValue(secretName);
 
-    sequelize = new Sequelize(
-      secret.dbname || 'bgv',
+    const sequelize = new Sequelize(
+      secret.dbname,
       secret.username,
       secret.password,
       {
@@ -95,17 +89,16 @@ app.use(async (req, res, next) => {
       }
     );
 
-    // Test the connection
-    await sequelize.authenticate();
-    console.log('Database connection established successfully.');
+    await sequelize.sync({ alter: true });
+    console.log('Database synced successfully.');
     next();
   } catch (err) {
-    console.error('Error connecting to the database:', err);
-    res.status(500).send('Error connecting to the database');
+    console.error('Error syncing database:', err);
+    res.status(500).send('Error syncing database');
   }
 });
 
-// Start the server locally for testing (this part will not be used in Lambda)
+// Start the server locally for testing
 if (process.env.NODE_ENV !== 'production') {
   app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
