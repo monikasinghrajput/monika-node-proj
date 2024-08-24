@@ -1,9 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const sequelize = require("./config/data-source");
+const sequelize = require("./config/data-source"); // This will now use the updated data-source.js
 const cors = require("cors");
 const passport = require("./config/auth");
-const unless = require("express-unless");
 const awsServerlessExpress = require('aws-serverless-express');
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
 const app = express();
@@ -74,4 +73,3 @@ if (process.env.NODE_ENV !== 'production') {
 // Export the handler for AWS Lambda
 const server = awsServerlessExpress.createServer(app);
 exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context);
-
