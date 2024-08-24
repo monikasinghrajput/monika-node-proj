@@ -17,6 +17,13 @@
     "url": "https://github.com/krishansharma009/real_be/issues"
   },
   "dependencies": {
+<<<<<<< HEAD
+=======
+    "@aws-sdk/client-lambda": "^3.637.0",
+    "@aws-sdk/client-s3": "^3.637.0",
+    "@aws-sdk/client-secrets-manager": "^3.637.0",
+    "aws-sdk": "^2.1682.0",
+>>>>>>> a8bc10ddeaa47f83d4916433757d03826c915c9f
     "aws-serverless-express": "^3.4.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",

@@ -1,26 +1,39 @@
-const { Sequelize } = require("sequelize");
-require("dotenv").config(); // Load environment variables from .env file
+const { Sequelize } = require('sequelize');
+const AWS = require('aws-sdk');
+const secretsManager = new AWS.SecretsManager();
 
-const sequelize = new Sequelize(
-  process.env.RDS_DB_NAME || 'bgv',
-  process.env.RDS_USERNAME,
-  process.env.RDS_PASSWORD,
-  {
-    host: process.env.RDS_HOSTNAME,
-    post: process.env.RDS_PORT,
-    dialect: "mysql",
-    dialectModule: require("mysql2"), // Explicitly use mysql2 for Sequelize
-  }
-);
+const getSecret = async (secretName) => {
+    try {
+        const data = await secretsManager.getSecretValue({ SecretId: secretName }).promise();
+        if (data.SecretString) {
+            return JSON.parse(data.SecretString);
+        }
+        throw new Error('SecretString is empty');
+    } catch (err) {
+        console.error('Error retrieving secret:', err);
+        throw err;
+    }
+};
 
-// Test the connection
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("Connection has been established successfully.");
-  })
-  .catch((err) => {
-    console.error("Unable to connect to the database:", err);
-  });
+const setupDatabase = async () => {
+    const secretName = 'myRdsSecrets'; // Replace with your actual secret name
+    const secrets = await getSecret(secretName);
 
-module.exports = sequelize;
+    const sequelize = new Sequelize(secrets.dbname, secrets.username, secrets.password, {
+        host: secrets.host,
+        dialect: 'mysql',
+        port: secrets.port,
+        logging: false, // Disable SQL query logging
+    });
+
+    try {
+        await sequelize.authenticate();
+        console.log('Connection has been established successfully.');
+        return sequelize;
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+        throw error;
+    }
+};
+
+module.exports = setupDatabase;
