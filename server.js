@@ -3,7 +3,6 @@ const bodyParser = require("body-parser");
 const sequelize = require("./config/data-source");
 const cors = require("cors");
 const passport = require("./config/auth");
-const unless = require("express-unless");
 const awsServerlessExpress = require('aws-serverless-express');
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
 const app = express();
@@ -20,7 +19,6 @@ const clientRouter = require("./api/client/client-route");
 const featureRouter = require("./api/feature/feature-route");
 const internalTeamRouter = require("./api/internal-team/internal_team-route");
 const locationRouter = require("./api/locationCSC/locationRoutes");
-
 const WorkingRouter = require("./api/WorkingExperiance/work-experience-routes");
 const FatherRouter = require("./api/fatherdoc/fathers-documents-routes");
 const TeamregRouter = require("./api/TeamRegistration/teamRoutes");
