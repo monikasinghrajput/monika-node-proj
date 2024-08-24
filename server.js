@@ -2,10 +2,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const sequelize = require("./config/data-source");
 const cors = require("cors");
-const passport = require("./config/auth");
+const passport = require("./config/auth"); // Import your Passport configuration
+const unless = require("express-unless"); // Import express-unless
 const awsServerlessExpress = require('aws-serverless-express');
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
-const app = express();
+const path = require('path');
 
 const userRouter = require("./api/user/user-route");
 const candidateRouter = require("./api/candidate/candidate-route");
@@ -23,16 +24,23 @@ const WorkingRouter = require("./api/WorkingExperiance/work-experience-routes");
 const FatherRouter = require("./api/fatherdoc/fathers-documents-routes");
 const TeamregRouter = require("./api/TeamRegistration/teamRoutes");
 
-const path = require('path');
+const app = express();
 const port = process.env.PORT || 8080;
 
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(awsServerlessExpressMiddleware.eventContext());
-
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
+// Database synchronization
 sequelize
   .sync({ alter: true })
   .then(() => {
@@ -42,10 +50,12 @@ sequelize
     console.error("Error syncing database:", err);
   });
 
-app.use("/_alive", async (req, res) => {
+// Health check route
+app.use("/_alive", (req, res) => {
   res.status(200).send("Welcome to vitsinco.com");
 });
 
+// Routes
 app.use("/users", userRouter);
 app.use("/candidate", candidateRouter);
 app.use("/candidate-address", candidateAddressRouter);
@@ -56,19 +66,19 @@ app.use("/candidate-reference", candidateReferenceRouter);
 app.use("/candidate-verification", candidateVerificationRouter);
 app.use("/client", clientRouter);
 app.use("/feature", featureRouter);
-app.use("/internal-tea", internalTeamRouter);
+app.use("/internal-team", internalTeamRouter);
 app.use("/location", locationRouter);
 app.use("/workingExp", WorkingRouter);
 app.use("/fathers-document", FatherRouter);
 app.use("/internal-team", TeamregRouter);
 
-// Start the server locally for testing
+// Local server for testing
 if (process.env.NODE_ENV !== 'production') {
   app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
   });
 }
 
-// Export the handler for AWS Lambda
+// AWS Lambda handler
 const server = awsServerlessExpress.createServer(app);
 exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context);
