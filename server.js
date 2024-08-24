@@ -78,6 +78,10 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
+
 // AWS Lambda handler
 const server = awsServerlessExpress.createServer(app);
-exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context);
+exports.handler = (event, context) => {
+  console.log('Event:', JSON.stringify(event, null, 2)); // Log incoming event
+  awsServerlessExpress.proxy(server, event, context);
+};
