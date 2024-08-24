@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const sequelize = require("./config/data-source");
 const cors = require("cors");
-const passport = require("./config/auth"); // Import your Passport configuration
+const passport = require("./config/auth");
 const awsServerlessExpress = require('aws-serverless-express');
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
 const path = require('path');
@@ -26,20 +26,11 @@ const TeamregRouter = require("./api/TeamRegistration/teamRoutes");
 const app = express();
 const port = process.env.PORT || 8080;
 
-// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(passport.initialize());
-app.use(awsServerlessExpressMiddleware.eventContext());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
-
-// Database synchronization
 sequelize
   .sync({ alter: true })
   .then(() => {
@@ -49,12 +40,9 @@ sequelize
     console.error("Error syncing database:", err);
   });
 
-// Health check route
 app.use("/_alive", (req, res) => {
   res.status(200).send("Welcome to vitsinco.com");
 });
-
-// Routes
 app.use("/users", userRouter);
 app.use("/candidate", candidateRouter);
 app.use("/candidate-address", candidateAddressRouter);
@@ -71,17 +59,6 @@ app.use("/workingExp", WorkingRouter);
 app.use("/fathers-document", FatherRouter);
 app.use("/internal-team", TeamregRouter);
 
-// Local server for testing
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-  });
-}
-
-
-// AWS Lambda handler
+// Create an AWS Lambda handler
 const server = awsServerlessExpress.createServer(app);
-exports.handler = (event, context) => {
-  console.log('Event:', JSON.stringify(event, null, 2)); // Log incoming event
-  awsServerlessExpress.proxy(server, event, context);
-};
+exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context);
