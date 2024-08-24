@@ -3,7 +3,6 @@ const bodyParser = require("body-parser");
 const sequelize = require("./config/data-source");
 const cors = require("cors");
 const passport = require("./config/auth"); // Import your Passport configuration
-const unless = require("express-unless"); // Import express-unless
 const awsServerlessExpress = require('aws-serverless-express');
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
 const path = require('path');
