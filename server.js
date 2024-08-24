@@ -105,3 +105,42 @@ if (process.env.NODE_ENV !== 'production') {
 // Export the handler for AWS Lambda
 const server = awsServerlessExpress.createServer(app);
 exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context);
+const mysql = require('mysql');
+
+const connection = mysql.createConnection({
+  host: 'lambda-rds-db.cduywgy8wxd9.ap-south-1.rds.amazonaws.com',
+  user: 'admin',
+  password: 'your_password',
+  database: 'your_database'
+});
+
+exports.handler = (event, context, callback) => {
+  connection.connect(err => {
+    if (err) {
+      console.error('Error connecting to the database:', err);
+      callback(null, {
+        statusCode: 500,
+        body: 'Error syncing database'
+      });
+      return;
+    }
+    console.log('Connected to the database');
+    // Perform database operations here
+
+    // End the connection
+    connection.end(err => {
+      if (err) {
+        console.error('Error ending the connection:', err);
+        callback(null, {
+          statusCode: 500,
+          body: 'Error syncing database'
+        });
+        return;
+      }
+      callback(null, {
+        statusCode: 200,
+        body: 'Database operation successful'
+      });
+    });
+  });
+};
