@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/krishansharma009/real_be.git"
+    "url": "git+https://github.com/monikasinghrajput/monika-node-proj.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/krishansharma009/real_be/issues"
+    "url": "https://github.com/monikasinghrajput/monika-node-proj/issues"
   },
   "dependencies": {
     "aws-serverless-express": "^3.4.0",
@@ -39,5 +39,5 @@
   "devDependencies": {
     "nodemon": "^3.1.1"
   },
-  "homepage": "https://github.com/krishansharma009/real_be#readme"
+  "homepage": "https://github.com/monikasinghrajput/monika-node-proj#readme"
 }
